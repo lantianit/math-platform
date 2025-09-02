@@ -1,0 +1,45 @@
+# 代码生成器配置文件
+# 修改此文件中的配置，然后运行 CodeGenerator.main() 方法即可生成代码
+
+# 基础配置
+base:
+  packageName: "com.zh.mathplatform"
+  author: "CodeGenerator"
+  dateFormat: "yyyy-MM-dd"
+
+# 实体配置
+entities:
+  # 用户模块
+  user:
+    entityName: "用户"
+    entityKey: "user"
+    entityClass: "User"
+    tableName: "user_info"
+    description: "用户信息管理"
+    
+  # 文章模块
+  post:
+    entityName: "文章"
+    entityKey: "post"
+    entityClass: "Post"
+    tableName: "post_info"
+    description: "文章信息管理"
+    
+  # 评论模块
+  comment:
+    entityName: "评论"
+    entityKey: "comment"
+    entityClass: "Comment"
+    tableName: "comment_info"
+    description: "评论信息管理"
+
+# 生成配置
+generate:
+  # 是否生成领域层
+  domain: true
+  # 是否生成应用层
+  application: true
+  # 是否生成基础设施层
+  infrastructure: true
+  # 是否生成接口层
+  interfaces: true

@@ -1,0 +1,292 @@
+# ===========================================
+# Math Platform 前后端项目 .gitignore
+# ===========================================
+
+# ===========================================
+# Java / Spring Boot 相关
+# ===========================================
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle (如果使用)
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Spring Boot
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# 配置文件 (保留基础配置，忽略环境特定配置)
+application-*.yml
+application-*.properties
+!application.yml
+!application.properties
+
+# 日志文件
+logs/
+*.log
+*.log.*
+
+# IDE 相关
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+*.swp
+*.swo
+*~
+
+# ===========================================
+# Vue / Node.js 相关
+# ===========================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 构建输出
+dist/
+build/
+.next/
+.nuxt/
+.output/
+
+# 缓存目录
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 本地配置文件
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 测试覆盖率
+coverage/
+*.lcov
+.nyc_output
+
+# Storybook
+storybook-static
+
+# 临时文件
+.tmp/
+.temp/
+
+# ===========================================
+# 操作系统相关
+# ===========================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===========================================
+# 数据库相关
+# ===========================================
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+
+# 数据库备份
+*.sql.bak
+*.dump
+*.backup
+
+# ===========================================
+# 其他开发工具
+# ===========================================
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 版本控制
+.svn/
+CVS/
+RCS/
+SCCS/
+.git/
+
+# 压缩文件
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.rej
+
+# 系统文件
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===========================================
+# 项目特定忽略
+# ===========================================
+
+# 后端特定
+math-platform-backend/logs/
+math-platform-backend/upload/
+math-platform-backend/temp/
+
+# 前端特定
+math-platform-frontend/.env.local
+math-platform-frontend/.env.development.local
+math-platform-frontend/.env.test.local
+math-platform-frontend/.env.production.local
+
+# 文档生成
+docs/_build/
+docs/.doctrees/
+
+# 测试报告
+test-results/
+coverage-reports/
+
+# 性能分析
+*.hprof
+*.jfr
+
+# 安全相关
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ===========================================
+# 保留文件 (强制跟踪)
+# ===========================================
+
+# 保留重要的配置文件
+!application.yml
+!application.properties
+!package.json
+!package-lock.json
+!yarn.lock
+!pnpm-lock.yaml
+!tsconfig.json
+!vite.config.ts
+!next.config.js
+!nuxt.config.js
+!tailwind.config.js
+!postcss.config.js
+!eslint.config.js
+!.eslintrc.js
+!.eslintrc.json
+!.prettierrc
+!.prettierrc.js
+!.prettierrc.json
+!babel.config.js
+!webpack.config.js
+!rollup.config.js
+
+# 保留文档
+!README.md
+!CHANGELOG.md
+!LICENSE
+!docs/**/*.md
+
+# 保留脚本
+!scripts/
+!*.sh
+!*.bat
+!*.cmd
+
+# 保留 CI/CD 配置
+!.github/
+!.gitlab-ci.yml
+!Jenkinsfile
+!Dockerfile
+!docker-compose.yml
+!docker-compose.*.yml
