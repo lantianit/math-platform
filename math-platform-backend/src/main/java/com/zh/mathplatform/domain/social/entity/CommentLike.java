@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 帖子点赞
+ * 评论点赞
  *
- * @TableName post_like
+ * @TableName comment_like
  */
-@TableName(value = "post_like")
+@TableName(value = "comment_like")
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PostLike implements Serializable {
+public class CommentLike implements Serializable {
 
     /**
      * ID
@@ -24,9 +24,9 @@ public class PostLike implements Serializable {
     private Long id;
 
     /**
-     * 帖子ID
+     * 评论ID
      */
-    private Long postId;
+    private Long commentId;
 
     /**
      * 用户ID
@@ -56,30 +56,4 @@ public class PostLike implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 校验点赞参数
-     */
-    public static void validPostLike(Long postId, Long userId) {
-        if (postId == null || postId <= 0) {
-            throw new IllegalArgumentException("帖子ID无效");
-        }
-        if (userId == null || userId <= 0) {
-            throw new IllegalArgumentException("用户ID无效");
-        }
-    }
-
-    /**
-     * 是否已删除
-     */
-    public boolean isDeleted() {
-        return this.isDelete != null && this.isDelete == 1;
-    }
-
-    /**
-     * 标记为删除
-     */
-    public void markAsDeleted() {
-        this.isDelete = 1;
-    }
 }

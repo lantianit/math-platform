@@ -47,9 +47,24 @@ public class Comment implements Serializable {
     private Long parentId;
 
     /**
+     * 根评论ID（用于楼层显示）
+     */
+    private Long rootId;
+
+    /**
+     * 回复目标用户ID
+     */
+    private Long replyToId;
+
+    /**
      * 点赞数
      */
     private Integer likeCount;
+
+    /**
+     * 回复数
+     */
+    private Integer replyCount;
 
     /**
      * 状态：0-删除 1-正常

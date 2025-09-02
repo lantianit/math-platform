@@ -58,6 +58,71 @@ public class User implements Serializable {
     private String userRole;
 
     /**
+     * 性别：0-未知 1-男 2-女
+     */
+    private Integer gender;
+
+    /**
+     * 邮箱
+     */
+    private String email;
+
+    /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
+     * 生日
+     */
+    private Date birthday;
+
+    /**
+     * 所在地
+     */
+    private String location;
+
+    /**
+     * 个人网站
+     */
+    private String website;
+
+    /**
+     * 关注数
+     */
+    private Integer followingCount;
+
+    /**
+     * 粉丝数
+     */
+    private Integer followerCount;
+
+    /**
+     * 发帖数
+     */
+    private Integer postCount;
+
+    /**
+     * 获赞数
+     */
+    private Integer likeCount;
+
+    /**
+     * 状态：0-封禁 1-正常
+     */
+    private Integer status;
+
+    /**
+     * 最后登录时间
+     */
+    private Date lastLoginTime;
+
+    /**
+     * 最后登录IP
+     */
+    private String lastLoginIp;
+
+    /**
      * 编辑时间
      */
     private Date editTime;

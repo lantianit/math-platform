@@ -86,4 +86,29 @@ public interface PostRepository {
      * 减少收藏数
      */
     boolean decreaseFavouriteCount(Long postId);
+
+    /**
+     * 根据条件分页查询帖子
+     */
+    IPage<Post> findByConditionPage(Page<Post> page, LambdaQueryWrapper<Post> wrapper);
+
+    /**
+     * 获取关注用户的帖子
+     */
+    IPage<Post> findFollowingUserPosts(Page<Post> page, Long userId);
+
+    /**
+     * 增加分享数
+     */
+    boolean increaseShareCount(Long postId);
+
+    /**
+     * 更新质量评分
+     */
+    boolean updateQualityScore(Long postId, Double score);
+
+    /**
+     * 更新热度评分
+     */
+    boolean updateHotScore(Long postId, Double score);
 }

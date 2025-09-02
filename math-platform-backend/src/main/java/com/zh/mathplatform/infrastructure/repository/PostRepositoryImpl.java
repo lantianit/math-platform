@@ -127,4 +127,44 @@ public class PostRepositoryImpl implements PostRepository {
                .setSql("favourite_count = favourite_count - 1");
         return postMapper.update(null, wrapper) > 0;
     }
+
+    @Override
+    public IPage<Post> findByConditionPage(Page<Post> page, LambdaQueryWrapper<Post> wrapper) {
+        return postMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public IPage<Post> findFollowingUserPosts(Page<Post> page, Long userId) {
+        // 这里需要联表查询，查询关注用户的帖子
+        // 简化实现，实际应该使用自定义SQL
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Post::getIsDelete, 0)
+               .orderByDesc(Post::getCreateTime);
+        // TODO: 实现关注用户帖子的联表查询
+        return postMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public boolean increaseShareCount(Long postId) {
+        LambdaUpdateWrapper<Post> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Post::getId, postId)
+               .setSql("share_count = share_count + 1");
+        return postMapper.update(null, wrapper) > 0;
+    }
+
+    @Override
+    public boolean updateQualityScore(Long postId, Double score) {
+        LambdaUpdateWrapper<Post> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Post::getId, postId)
+               .set(Post::getQualityScore, score);
+        return postMapper.update(null, wrapper) > 0;
+    }
+
+    @Override
+    public boolean updateHotScore(Long postId, Double score) {
+        LambdaUpdateWrapper<Post> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Post::getId, postId)
+               .set(Post::getHotScore, score);
+        return postMapper.update(null, wrapper) > 0;
+    }
 }

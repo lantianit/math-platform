@@ -38,6 +38,11 @@ public class Post implements Serializable {
     private String content;
 
     /**
+     * 内容摘要
+     */
+    private String contentSummary;
+
+    /**
      * 发布者ID
      */
     private Long userId;
@@ -78,9 +83,59 @@ public class Post implements Serializable {
     private Integer favouriteCount;
 
     /**
-     * 状态：0-删除 1-正常
+     * 分享数
+     */
+    private Integer shareCount;
+
+    /**
+     * 质量评分
+     */
+    private Double qualityScore;
+
+    /**
+     * 热度评分
+     */
+    private Double hotScore;
+
+    /**
+     * 状态：0-删除 1-正常 2-审核中 3-精华
      */
     private Integer status;
+
+    /**
+     * 是否置顶
+     */
+    private Integer isTop;
+
+    /**
+     * 是否热门
+     */
+    private Integer isHot;
+
+    /**
+     * 审核状态：0-待审核 1-通过 2-拒绝
+     */
+    private Integer auditStatus;
+
+    /**
+     * 审核时间
+     */
+    private Date auditTime;
+
+    /**
+     * 审核人ID
+     */
+    private Long auditUserId;
+
+    /**
+     * 审核备注
+     */
+    private String auditRemark;
+
+    /**
+     * 发布时间
+     */
+    private Date publishTime;
 
     /**
      * 创建时间

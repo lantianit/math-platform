@@ -5,11 +5,16 @@ import com.zh.mathplatform.infrastructure.common.BaseResponse;
 import com.zh.mathplatform.infrastructure.common.ResultUtils;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
+import com.zh.mathplatform.interfaces.dto.social.CommentLikeRequest;
+import com.zh.mathplatform.interfaces.dto.social.PostFavouriteRequest;
+import com.zh.mathplatform.interfaces.dto.social.PostLikeRequest;
+import com.zh.mathplatform.interfaces.dto.social.UserFollowRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -29,11 +34,7 @@ public class SocialController {
      * 点赞/取消点赞帖子
      */
     @PostMapping("/post/like")
-    public BaseResponse<Boolean> togglePostLike(@RequestBody PostLikeRequest postLikeRequest, HttpServletRequest request) {
-        if (postLikeRequest == null || postLikeRequest.getPostId() == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-
+    public BaseResponse<Boolean> togglePostLike(@Valid @RequestBody PostLikeRequest postLikeRequest, HttpServletRequest request) {
         // 获取当前登录用户
         Long userId = getLoginUserId(request);
         if (userId == null) {

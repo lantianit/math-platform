@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.mathplatform.infrastructure.mapper.PostMapper">
+    
+    <!-- 获取关注用户的帖子 -->
+    <select id="findFollowingUserPosts" resultType="com.zh.mathplatform.domain.post.entity.Post">
+        SELECT p.* 
+        FROM post p
+        INNER JOIN user_follow uf ON p.user_id = uf.following_id
+        WHERE uf.follower_id = #{userId}
+          AND p.is_delete = 0
+          AND uf.is_delete = 0
+        ORDER BY p.create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+    
+    <!-- 获取热门帖子（复杂排序算法） -->
+    <select id="findHotPosts" resultType="com.zh.mathplatform.domain.post.entity.Post">
+        SELECT *,
+               (view_count * 0.3 + like_count * 0.4 + comment_count * 0.3) as hot_score
+        FROM post 
+        WHERE is_delete = 0 
+          AND status = 1
+        ORDER BY hot_score DESC, create_time DESC
+        LIMIT #{limit}
+    </select>
+    
+</mapper>

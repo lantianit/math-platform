@@ -62,7 +62,32 @@ public interface PostApplicationService {
     List<Post> getHotPosts(Integer limit);
 
     /**
+     * 分页获取热门帖子
+     */
+    IPage<Post> getHotPosts(Page<Post> page);
+
+    /**
      * 获取最新帖子
      */
     List<Post> getLatestPosts(Integer limit);
+
+    /**
+     * 分页获取最新帖子
+     */
+    IPage<Post> getLatestPosts(Page<Post> page);
+
+    /**
+     * 获取推荐帖子
+     */
+    IPage<Post> getRecommendPosts(Page<Post> page, Long userId);
+
+    /**
+     * 获取关注用户的帖子
+     */
+    IPage<Post> getFollowingPosts(Page<Post> page, Long userId);
+
+    /**
+     * 根据分类分页获取帖子
+     */
+    IPage<Post> getPostsByCategory(Page<Post> page, String category);
 }

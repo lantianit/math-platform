@@ -34,6 +34,11 @@ public class PostFavourite implements Serializable {
     private Long userId;
 
     /**
+     * 收藏夹ID
+     */
+    private Long folderId;
+
+    /**
      * 创建时间
      */
     private Date createTime;

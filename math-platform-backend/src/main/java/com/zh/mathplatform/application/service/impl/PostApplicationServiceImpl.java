@@ -243,4 +243,69 @@ public class PostApplicationServiceImpl implements PostApplicationService {
 
         return postRepository.findByCondition(wrapper);
     }
+
+    @Override
+    public IPage<Post> getHotPosts(Page<Post> page) {
+        // 按热度评分排序获取热门帖子
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Post::getIsDelete, 0)
+               .orderByDesc(Post::getViewCount)
+               .orderByDesc(Post::getLikeCount)
+               .orderByDesc(Post::getCreateTime);
+
+        return postRepository.findByConditionPage(page, wrapper);
+    }
+
+    @Override
+    public IPage<Post> getLatestPosts(Page<Post> page) {
+        // 按创建时间排序获取最新帖子
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Post::getIsDelete, 0)
+               .orderByDesc(Post::getCreateTime);
+
+        return postRepository.findByConditionPage(page, wrapper);
+    }
+
+    @Override
+    public IPage<Post> getRecommendPosts(Page<Post> page, Long userId) {
+        // 推荐算法：结合热度、用户兴趣等
+        // 这里简化处理，按综合评分排序
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Post::getIsDelete, 0);
+        
+        if (userId != null) {
+            // 可以根据用户的关注、点赞历史等进行个性化推荐
+            // 这里暂时按浏览量和点赞数综合排序
+            wrapper.orderByDesc(Post::getLikeCount)
+                   .orderByDesc(Post::getViewCount)
+                   .orderByDesc(Post::getCreateTime);
+        } else {
+            // 未登录用户显示热门内容
+            wrapper.orderByDesc(Post::getViewCount)
+                   .orderByDesc(Post::getCreateTime);
+        }
+
+        return postRepository.findByConditionPage(page, wrapper);
+    }
+
+    @Override
+    public IPage<Post> getFollowingPosts(Page<Post> page, Long userId) {
+        // 获取关注用户的帖子
+        return postRepository.findFollowingUserPosts(page, userId);
+    }
+
+    @Override
+    public IPage<Post> getPostsByCategory(Page<Post> page, String category) {
+        // 根据分类获取帖子
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Post::getIsDelete, 0);
+        
+        if (StrUtil.isNotBlank(category)) {
+            wrapper.eq(Post::getCategory, category);
+        }
+        
+        wrapper.orderByDesc(Post::getCreateTime);
+
+        return postRepository.findByConditionPage(page, wrapper);
+    }
 }
