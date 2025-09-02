@@ -21,6 +21,11 @@ public interface PostMapper extends BaseMapper<Post> {
                                      @Param("size") Long size);
 
     /**
+     * 获取关注用户的帖子总数
+     */
+    Long countFollowingUserPosts(@Param("userId") Long userId);
+
+    /**
      * 获取热门帖子
      */
     List<Post> findHotPosts(@Param("limit") Integer limit);

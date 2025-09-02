@@ -135,13 +135,20 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public IPage<Post> findFollowingUserPosts(Page<Post> page, Long userId) {
-        // 这里需要联表查询，查询关注用户的帖子
-        // 简化实现，实际应该使用自定义SQL
-        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Post::getIsDelete, 0)
-               .orderByDesc(Post::getCreateTime);
-        // TODO: 实现关注用户帖子的联表查询
-        return postMapper.selectPage(page, wrapper);
+        // 计算偏移量
+        long offset = (page.getCurrent() - 1) * page.getSize();
+        
+        // 获取关注用户的帖子列表
+        List<Post> posts = postMapper.findFollowingUserPosts(userId, offset, page.getSize());
+        
+        // 获取总数
+        Long total = postMapper.countFollowingUserPosts(userId);
+        
+        // 构造分页结果
+        page.setRecords(posts);
+        page.setTotal(total);
+        
+        return page;
     }
 
     @Override

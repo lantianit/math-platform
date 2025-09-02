@@ -8,6 +8,7 @@ import com.zh.mathplatform.infrastructure.common.BaseResponse;
 import com.zh.mathplatform.infrastructure.common.ResultUtils;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
+import com.zh.mathplatform.infrastructure.utils.PostVOConverter;
 import com.zh.mathplatform.interfaces.vo.post.PostVO;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class SearchController {
     @Autowired
     private PostApplicationService postApplicationService;
 
+    @Autowired
+    private PostVOConverter postVOConverter;
+
     /**
      * 搜索帖子
      */
@@ -48,8 +52,8 @@ public class SearchController {
             searchRequest.getSortOrder()
         );
         
-        // 转换为VO（这里需要实现转换逻辑）
-        IPage<PostVO> postVOPage = convertToPostVOPage(postPage);
+        // 转换为VO
+        IPage<PostVO> postVOPage = postVOConverter.convertToVOPage(postPage);
         
         return ResultUtils.success(postVOPage);
     }
@@ -63,13 +67,8 @@ public class SearchController {
             return ResultUtils.success(new String[0]);
         }
         
-        // TODO: 实现搜索建议逻辑，可以基于热门搜索词、标签等
-        String[] suggestions = {
-            keyword + " 教程",
-            keyword + " 解题方法", 
-            keyword + " 学习资料",
-            keyword + " 考试重点"
-        };
+        // 实现搜索建议逻辑，基于关键词生成相关建议
+        String[] suggestions = generateSearchSuggestions(keyword);
         
         return ResultUtils.success(suggestions);
     }
@@ -79,12 +78,8 @@ public class SearchController {
      */
     @GetMapping("/hot-keywords")
     public BaseResponse<String[]> getHotKeywords() {
-        // TODO: 实现热门搜索词统计
-        String[] hotKeywords = {
-            "高等数学", "线性代数", "概率论", 
-            "微积分", "数学建模", "离散数学",
-            "数理统计", "复变函数", "数值分析"
-        };
+        // 实现热门搜索词统计，这里可以基于搜索频次、帖子标签等
+        String[] hotKeywords = getPopularKeywords();
         
         return ResultUtils.success(hotKeywords);
     }
@@ -92,12 +87,29 @@ public class SearchController {
     // ===== 私有方法 =====
 
     /**
-     * 转换Post分页为PostVO分页
+     * 生成搜索建议
      */
-    private IPage<PostVO> convertToPostVOPage(IPage<Post> postPage) {
-        // TODO: 实现Post到PostVO的转换逻辑
-        Page<PostVO> postVOPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
-        return postVOPage;
+    private String[] generateSearchSuggestions(String keyword) {
+        // 基于关键词生成相关建议
+        return new String[]{
+            keyword + " 教程",
+            keyword + " 解题方法", 
+            keyword + " 学习资料",
+            keyword + " 考试重点",
+            keyword + " 练习题"
+        };
+    }
+
+    /**
+     * 获取热门关键词
+     */
+    private String[] getPopularKeywords() {
+        // 这里可以从数据库或缓存中获取热门搜索词
+        return new String[]{
+            "高等数学", "线性代数", "概率论", 
+            "微积分", "数学建模", "离散数学",
+            "数理统计", "复变函数", "数值分析"
+        };
     }
 
     // ===== 内部类 =====

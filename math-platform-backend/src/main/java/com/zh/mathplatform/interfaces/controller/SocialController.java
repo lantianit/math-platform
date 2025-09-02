@@ -9,6 +9,7 @@ import com.zh.mathplatform.interfaces.dto.social.CommentLikeRequest;
 import com.zh.mathplatform.interfaces.dto.social.PostFavouriteRequest;
 import com.zh.mathplatform.interfaces.dto.social.PostLikeRequest;
 import com.zh.mathplatform.interfaces.dto.social.UserFollowRequest;
+import com.zh.mathplatform.infrastructure.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -264,9 +265,7 @@ public class SocialController {
      * 获取当前登录用户ID
      */
     private Long getLoginUserId(HttpServletRequest request) {
-        // TODO: 从session或token中获取用户ID
-        // 这里需要根据实际的用户认证机制来实现
-        return 1L; // 临时返回，实际需要从认证信息中获取
+        return UserHolder.getLoginUserId(request);
     }
 
     // ===== 请求类定义 =====

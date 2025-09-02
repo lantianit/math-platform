@@ -9,6 +9,7 @@ import com.zh.mathplatform.infrastructure.common.BaseResponse;
 import com.zh.mathplatform.infrastructure.common.ResultUtils;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
+import com.zh.mathplatform.infrastructure.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -206,9 +207,7 @@ public class PostController {
      * 获取当前登录用户ID
      */
     private Long getLoginUserId(HttpServletRequest request) {
-        // TODO: 从session或token中获取用户ID
-        // 这里需要根据实际的用户认证机制来实现
-        return 1L; // 临时返回，实际需要从认证信息中获取
+        return UserHolder.getLoginUserId(request);
     }
 
     // ===== 请求类定义 =====
