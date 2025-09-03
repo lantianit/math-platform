@@ -223,8 +223,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>com.zh.codecommunity.CodeCommunityBackendApplication</mainClass>
-                    <skip>true</skip>
+                    <mainClass>com.zh.mathplatform.MathPlatformApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

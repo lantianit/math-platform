@@ -100,6 +100,17 @@ public class UserController {
     }
 
     /**
+     * 根据 id 获取公开的用户信息（不需要管理员）
+     */
+    @GetMapping("/public/get/vo")
+    public BaseResponse<UserVO> getUserVOPublic(long id) {
+        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
+        User user = userApplicationService.getUserById(id);
+        ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
+        return ResultUtils.success(userApplicationService.getUserVO(user));
+    }
+
+    /**
      * 删除用户
      */
     @PostMapping("/delete")
@@ -122,6 +133,26 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         // 对象转换
+        User userEntity = UserAssembler.toUserEntity(userUpdateRequest);
+        userApplicationService.updateUser(userEntity);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 用户自助更新资料（昵称/头像/简介），需登录
+     */
+    @PostMapping("/update/profile")
+    public BaseResponse<Boolean> updateProfile(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
+        if (userUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 获取当前登录用户
+        User loginUser = userApplicationService.getLoginUser(request);
+        if (loginUser == null || loginUser.getId() == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        // 仅允许修改自己的资料
+        userUpdateRequest.setId(loginUser.getId());
         User userEntity = UserAssembler.toUserEntity(userUpdateRequest);
         userApplicationService.updateUser(userEntity);
         return ResultUtils.success(true);

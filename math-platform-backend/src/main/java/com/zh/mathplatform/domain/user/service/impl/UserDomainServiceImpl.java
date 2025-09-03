@@ -75,6 +75,19 @@ public class UserDomainServiceImpl implements UserDomainService {
         String encryptPassword = getEncryptPassword(userPassword);
         // 3. 查询数据库中的用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        // 仅选择稳定存在的列，避免因缺失扩展字段导致的查询失败
+        queryWrapper.select(
+                "id",
+                "userAccount",
+                "userName",
+                "userAvatar",
+                "userProfile",
+                "userRole",
+                "editTime",
+                "createTime",
+                "updateTime",
+                "isDelete"
+        );
         queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("userPassword", encryptPassword);
         User user = userRepository.getBaseMapper().selectOne(queryWrapper);
@@ -85,7 +98,6 @@ public class UserDomainServiceImpl implements UserDomainService {
         }
         // 4. 保存用户的登录态
         request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, user);
-        // 记录用户登录态到 Sa-token，便于空间鉴权时使用，注意保证该用户信息与 SpringSession 中的信息过期时间一致
         return this.getLoginUserVO(user);
     }
 
@@ -112,7 +124,20 @@ public class UserDomainServiceImpl implements UserDomainService {
         }
         // 从数据库中查询（追求性能的话可以注释，直接返回上述结果）
         Long userId = currentUser.getId();
-        currentUser = userRepository.getById(userId);
+        QueryWrapper<User> selectByIdWrapper = new QueryWrapper<>();
+        selectByIdWrapper.select(
+                "id",
+                "userAccount",
+                "userName",
+                "userAvatar",
+                "userProfile",
+                "userRole",
+                "editTime",
+                "createTime",
+                "updateTime",
+                "isDelete"
+        ).eq("id", userId);
+        currentUser = userRepository.getBaseMapper().selectOne(selectByIdWrapper);
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }

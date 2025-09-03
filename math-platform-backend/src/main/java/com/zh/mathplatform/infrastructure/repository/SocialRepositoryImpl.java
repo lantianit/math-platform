@@ -45,8 +45,7 @@ public class SocialRepositoryImpl implements SocialRepository {
     public PostLike findPostLikeByPostIdAndUserId(Long postId, Long userId) {
         LambdaQueryWrapper<PostLike> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PostLike::getPostId, postId)
-               .eq(PostLike::getUserId, userId)
-               .eq(PostLike::getIsDelete, 0);
+               .eq(PostLike::getUserId, userId);
         return postLikeMapper.selectOne(wrapper);
     }
 
@@ -71,7 +70,6 @@ public class SocialRepositoryImpl implements SocialRepository {
     public List<Long> findLikedPostIdsByUserId(Long userId) {
         LambdaQueryWrapper<PostLike> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PostLike::getUserId, userId)
-               .eq(PostLike::getIsDelete, 0)
                .select(PostLike::getPostId);
         return postLikeMapper.selectObjs(wrapper).stream()
                 .map(obj -> (Long) obj)
@@ -100,8 +98,7 @@ public class SocialRepositoryImpl implements SocialRepository {
     public PostFavourite findPostFavouriteByPostIdAndUserId(Long postId, Long userId) {
         LambdaQueryWrapper<PostFavourite> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PostFavourite::getPostId, postId)
-               .eq(PostFavourite::getUserId, userId)
-               .eq(PostFavourite::getIsDelete, 0);
+               .eq(PostFavourite::getUserId, userId);
         return postFavouriteMapper.selectOne(wrapper);
     }
 
@@ -126,7 +123,6 @@ public class SocialRepositoryImpl implements SocialRepository {
     public List<Long> findFavouritePostIdsByUserId(Long userId) {
         LambdaQueryWrapper<PostFavourite> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PostFavourite::getUserId, userId)
-               .eq(PostFavourite::getIsDelete, 0)
                .select(PostFavourite::getPostId);
         return postFavouriteMapper.selectObjs(wrapper).stream()
                 .map(obj -> (Long) obj)
@@ -155,8 +151,7 @@ public class SocialRepositoryImpl implements SocialRepository {
     public UserFollow findUserFollowByFollowerAndFollowing(Long followerId, Long followingId) {
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserFollow::getFollowerId, followerId)
-               .eq(UserFollow::getFollowingId, followingId)
-               .eq(UserFollow::getIsDelete, 0);
+               .eq(UserFollow::getFollowingId, followingId);
         return userFollowMapper.selectOne(wrapper);
     }
 
@@ -201,16 +196,14 @@ public class SocialRepositoryImpl implements SocialRepository {
     @Override
     public Long countFollowingByUserId(Long userId) {
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFollow::getFollowerId, userId)
-               .eq(UserFollow::getIsDelete, 0);
+        wrapper.eq(UserFollow::getFollowerId, userId);
         return userFollowMapper.selectCount(wrapper).longValue();
     }
 
     @Override
     public Long countFollowersByUserId(Long userId) {
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFollow::getFollowingId, userId)
-               .eq(UserFollow::getIsDelete, 0);
+        wrapper.eq(UserFollow::getFollowingId, userId);
         return userFollowMapper.selectCount(wrapper).longValue();
     }
 }

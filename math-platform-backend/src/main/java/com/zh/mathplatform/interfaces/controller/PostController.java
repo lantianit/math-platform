@@ -1,6 +1,4 @@
 package com.zh.mathplatform.interfaces.controller;
-
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zh.mathplatform.application.service.PostApplicationService;
@@ -70,7 +68,7 @@ public class PostController {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
-        Post post = postApplicationService.updatePost(
+        postApplicationService.updatePost(
             postUpdateRequest.getId(),
             postUpdateRequest.getTitle(),
             postUpdateRequest.getContent(),
@@ -163,6 +161,42 @@ public class PostController {
     public BaseResponse<List<Post>> getLatestPosts(@RequestParam(defaultValue = "10") Integer limit) {
         List<Post> latestPosts = postApplicationService.getLatestPosts(limit);
         return ResultUtils.success(latestPosts);
+    }
+
+    /**
+     * 按用户分页获取帖子列表
+     */
+    @PostMapping("/user/list/page")
+    public BaseResponse<IPage<Post>> listUserPostsByPage(@RequestBody UserPostQueryRequest req) {
+        if (req == null || req.getUserId() == null || req.getUserId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Page<Post> page = new Page<>(req.getCurrent() == null ? 1 : req.getCurrent(),
+                req.getPageSize() == null ? 10 : req.getPageSize());
+        IPage<Post> postPage = postApplicationService.listPostsByUserIdPage(page, req.getUserId(),
+                req.getSortField(), req.getSortOrder());
+        return ResultUtils.success(postPage);
+    }
+
+    /**
+     * 用户帖子统计：帖子数、被点赞总数、被收藏总数、总浏览数
+     */
+    @GetMapping("/user/stats")
+    public BaseResponse<UserPostStatsVO> getUserPostStats(@RequestParam Long userId) {
+        if (userId == null || userId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        List<Post> list = postApplicationService.listPostsByUserId(userId);
+        long postCount = list.size();
+        long likeTotal = list.stream().mapToLong(p -> p.getLikeCount() == null ? 0 : p.getLikeCount()).sum();
+        long favTotal = list.stream().mapToLong(p -> p.getFavouriteCount() == null ? 0 : p.getFavouriteCount()).sum();
+        long viewTotal = list.stream().mapToLong(p -> p.getViewCount() == null ? 0 : p.getViewCount()).sum();
+        UserPostStatsVO vo = new UserPostStatsVO();
+        vo.setPostCount(postCount);
+        vo.setLikeTotal(likeTotal);
+        vo.setFavouriteTotal(favTotal);
+        vo.setViewTotal(viewTotal);
+        return ResultUtils.success(vo);
     }
 
     /**
@@ -318,5 +352,46 @@ public class PostController {
         // getters and setters
         public Long getPostId() { return postId; }
         public void setPostId(Long postId) { this.postId = postId; }
+    }
+
+    /**
+     * 用户帖子查询请求
+     */
+    public static class UserPostQueryRequest {
+        private Long userId;
+        private Long current;
+        private Long pageSize;
+        private String sortField = "createTime";
+        private String sortOrder = "desc";
+
+        public Long getUserId() { return userId; }
+        public void setUserId(Long userId) { this.userId = userId; }
+        public Long getCurrent() { return current; }
+        public void setCurrent(Long current) { this.current = current; }
+        public Long getPageSize() { return pageSize; }
+        public void setPageSize(Long pageSize) { this.pageSize = pageSize; }
+        public String getSortField() { return sortField; }
+        public void setSortField(String sortField) { this.sortField = sortField; }
+        public String getSortOrder() { return sortOrder; }
+        public void setSortOrder(String sortOrder) { this.sortOrder = sortOrder; }
+    }
+
+    /**
+     * 用户帖子统计返回
+     */
+    public static class UserPostStatsVO {
+        private long postCount;
+        private long likeTotal;
+        private long favouriteTotal;
+        private long viewTotal;
+
+        public long getPostCount() { return postCount; }
+        public void setPostCount(long postCount) { this.postCount = postCount; }
+        public long getLikeTotal() { return likeTotal; }
+        public void setLikeTotal(long likeTotal) { this.likeTotal = likeTotal; }
+        public long getFavouriteTotal() { return favouriteTotal; }
+        public void setFavouriteTotal(long favouriteTotal) { this.favouriteTotal = favouriteTotal; }
+        public long getViewTotal() { return viewTotal; }
+        public void setViewTotal(long viewTotal) { this.viewTotal = viewTotal; }
     }
 }

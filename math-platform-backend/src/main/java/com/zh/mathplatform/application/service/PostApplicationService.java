@@ -42,6 +42,11 @@ public interface PostApplicationService {
     List<Post> listPostsByUserId(Long userId);
 
     /**
+     * 按用户分页获取帖子
+     */
+    IPage<Post> listPostsByUserIdPage(Page<Post> page, Long userId, String sortField, String sortOrder);
+
+    /**
      * 处理帖子点赞
      */
     boolean togglePostLike(Long postId, Long userId);

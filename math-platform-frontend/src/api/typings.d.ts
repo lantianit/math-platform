@@ -1,4 +1,10 @@
 declare namespace API {
+  type BaseResponseArrayString_ = {
+    code?: number
+    data?: string[]
+    message?: string
+  }
+
   type BaseResponseBoolean_ = {
     code?: number
     data?: boolean
@@ -20,6 +26,12 @@ declare namespace API {
   type BaseResponseIPagePost_ = {
     code?: number
     data?: IPagePost_
+    message?: string
+  }
+
+  type BaseResponseIPagePostVO_ = {
+    code?: number
+    data?: IPagePostVO_
     message?: string
   }
 
@@ -87,7 +99,10 @@ declare namespace API {
     parentId?: number
     postId?: number
     reply?: boolean
+    replyCount?: number
+    replyToId?: number
     rootCommentId?: number
+    rootId?: number
     status?: number
     updateTime?: string
     userId?: number
@@ -162,6 +177,16 @@ declare namespace API {
     id: number
   }
 
+  type getPostsByCategoryUsingPOSTParams = {
+    /** category */
+    category: string
+  }
+
+  type getSearchSuggestionsUsingGETParams = {
+    /** keyword */
+    keyword: string
+  }
+
   type getUserByIdUsingGETParams = {
     /** id */
     id?: number
@@ -184,6 +209,14 @@ declare namespace API {
     current?: number
     pages?: number
     records?: Post[]
+    size?: number
+    total?: number
+  }
+
+  type IPagePostVO_ = {
+    current?: number
+    pages?: number
+    records?: PostVO[]
     size?: number
     total?: number
   }
@@ -220,6 +253,13 @@ declare namespace API {
     userRole?: string
   }
 
+  type PageRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+  }
+
   type PageUserVO_ = {
     current?: number
     pages?: number
@@ -229,16 +269,27 @@ declare namespace API {
   }
 
   type Post = {
+    auditRemark?: string
+    auditStatus?: number
+    auditTime?: string
+    auditUserId?: number
     category?: string
     commentCount?: number
     content?: string
+    contentSummary?: string
     createTime?: string
     deleted?: boolean
     favouriteCount?: number
+    hotScore?: number
     id?: number
     images?: string
     isDelete?: number
+    isHot?: number
+    isTop?: number
     likeCount?: number
+    publishTime?: string
+    qualityScore?: number
+    shareCount?: number
     status?: number
     tags?: string
     title?: string
@@ -293,12 +344,53 @@ declare namespace API {
     title?: string
   }
 
+  type PostVO = {
+    category?: string
+    commentCount?: number
+    content?: string
+    createTime?: string
+    favouriteCount?: number
+    id?: number
+    images?: string[]
+    isFavourited?: boolean
+    isLiked?: boolean
+    likeCount?: number
+    tags?: string[]
+    title?: string
+    updateTime?: string
+    userAvatar?: string
+    userId?: number
+    userName?: string
+    viewCount?: number
+  }
+
+  type SearchRequest = {
+    category?: string
+    current?: number
+    keyword?: string
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+  }
+
   type User = {
     admin?: boolean
+    birthday?: string
     createTime?: string
     editTime?: string
+    email?: string
+    followerCount?: number
+    followingCount?: number
+    gender?: number
     id?: number
     isDelete?: number
+    lastLoginIp?: string
+    lastLoginTime?: string
+    likeCount?: number
+    location?: string
+    phone?: string
+    postCount?: number
+    status?: number
     updateTime?: string
     userAccount?: string
     userAvatar?: string
@@ -306,6 +398,7 @@ declare namespace API {
     userPassword?: string
     userProfile?: string
     userRole?: string
+    website?: string
   }
 
   type UserAddRequest = {

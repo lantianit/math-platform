@@ -159,6 +159,37 @@ public class PostApplicationServiceImpl implements PostApplicationService {
     }
 
     @Override
+    public IPage<Post> listPostsByUserIdPage(Page<Post> page, Long userId, String sortField, String sortOrder) {
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Post::getIsDelete, 0)
+               .eq(Post::getUserId, userId);
+
+        if ("asc".equalsIgnoreCase(sortOrder)) {
+            if ("createTime".equals(sortField)) {
+                wrapper.orderByAsc(Post::getCreateTime);
+            } else if ("viewCount".equals(sortField)) {
+                wrapper.orderByAsc(Post::getViewCount);
+            } else if ("likeCount".equals(sortField)) {
+                wrapper.orderByAsc(Post::getLikeCount);
+            } else {
+                wrapper.orderByAsc(Post::getCreateTime);
+            }
+        } else {
+            if ("createTime".equals(sortField)) {
+                wrapper.orderByDesc(Post::getCreateTime);
+            } else if ("viewCount".equals(sortField)) {
+                wrapper.orderByDesc(Post::getViewCount);
+            } else if ("likeCount".equals(sortField)) {
+                wrapper.orderByDesc(Post::getLikeCount);
+            } else {
+                wrapper.orderByDesc(Post::getCreateTime);
+            }
+        }
+
+        return postRepository.findByPage(page, wrapper);
+    }
+
+    @Override
     @Transactional
     public boolean togglePostLike(Long postId, Long userId) {
         // 检查帖子是否存在

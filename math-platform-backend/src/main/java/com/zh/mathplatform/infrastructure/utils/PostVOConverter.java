@@ -1,6 +1,7 @@
 package com.zh.mathplatform.infrastructure.utils;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zh.mathplatform.domain.post.entity.Post;
@@ -37,8 +38,10 @@ public class PostVOConverter {
         PostVO postVO = new PostVO();
         BeanUtil.copyProperties(post, postVO);
 
-        // 获取用户信息并设置到PostVO中
-        User user = userMapper.selectById(post.getUserId());
+        // 获取用户信息并设置到PostVO中（仅选择必要字段，避免缺失列报错）
+        QueryWrapper<User> oneWrapper = new QueryWrapper<>();
+        oneWrapper.select("id", "userName", "userAvatar").eq("id", post.getUserId());
+        User user = userMapper.selectOne(oneWrapper);
         if (user != null) {
             postVO.setUserName(user.getUserName());
             postVO.setUserAvatar(user.getUserAvatar());
@@ -60,8 +63,10 @@ public class PostVOConverter {
                 .map(Post::getUserId)
                 .collect(Collectors.toSet());
 
-        // 批量查询用户信息
-        Map<Long, User> userMap = userMapper.selectBatchIds(userIds)
+        // 批量查询用户信息（仅选择必要字段，避免缺失列报错）
+        QueryWrapper<User> batchWrapper = new QueryWrapper<>();
+        batchWrapper.select("id", "userName", "userAvatar").in("id", userIds);
+        Map<Long, User> userMap = userMapper.selectList(batchWrapper)
                 .stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
 

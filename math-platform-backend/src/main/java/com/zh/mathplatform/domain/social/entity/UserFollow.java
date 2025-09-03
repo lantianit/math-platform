@@ -44,9 +44,9 @@ public class UserFollow implements Serializable {
     private Date updateTime;
 
     /**
-     * 是否删除
+     * 是否删除（无物理列，仅用于内存状态）
      */
-    @TableLogic
+    @TableField(exist = false)
     private Integer isDelete;
 
     @TableField(exist = false)

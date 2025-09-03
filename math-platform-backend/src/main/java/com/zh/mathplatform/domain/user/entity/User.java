@@ -75,21 +75,25 @@ public class User implements Serializable {
     /**
      * 生日
      */
+    @TableField(exist = false)
     private Date birthday;
 
     /**
      * 所在地
      */
+    @TableField(exist = false)
     private String location;
 
     /**
      * 个人网站
      */
+    @TableField(exist = false)
     private String website;
 
     /**
      * 关注数
      */
+    @TableField(exist = false)
     private Integer followingCount;
 
     /**
