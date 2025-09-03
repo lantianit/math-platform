@@ -33,9 +33,10 @@ import GlobalHeader from '@/components/GlobalHeader.vue'
 
 #basicLayout .content {
   padding: 28px;
-  background: linear-gradient(to right, #fefefe, #fff);
+  background: linear-gradient(to right, #fefefe, #fff) !important;
   flex: 1;
   min-height: 0;
+  /* 强制白色背景，覆盖任何暗色主题 */
 }
 
 #basicLayout .footer {

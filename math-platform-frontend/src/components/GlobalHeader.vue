@@ -10,12 +10,25 @@
         </router-link>
       </a-col>
       <a-col flex="auto">
-        <a-menu
-          v-model:selectedKeys="current"
-          mode="horizontal"
-          :items="items"
-          @click="doMenuClick"
-        />
+        <a-row :gutter="16" align="middle">
+          <a-col flex="200px">
+            <a-menu
+              v-model:selectedKeys="current"
+              mode="horizontal"
+              :items="items"
+              @click="doMenuClick"
+              class="header-menu"
+            />
+          </a-col>
+          <a-col flex="auto">
+            <SearchBox
+              placeholder="搜索帖子、用户、话题..."
+              size="middle"
+              @search="handleSearch"
+              class="header-search"
+            />
+          </a-col>
+        </a-row>
       </a-col>
       <!-- 用户信息展示栏 -->
       <a-col flex="120px">
@@ -58,6 +71,7 @@ import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/userController.ts'
 import { menuConfig, filterMenusByPermission, convertToAntMenuItems } from '@/constants/menu.ts'
+import SearchBox from './SearchBox.vue'
 
 const loginUserStore = useLoginUserStore()
 
@@ -99,6 +113,16 @@ const doLogout = async () => {
   }
 }
 
+// 搜索处理
+const handleSearch = (keyword: string) => {
+  if (keyword.trim()) {
+    router.push({
+      path: '/search',
+      query: { q: keyword }
+    })
+  }
+}
+
 
 </script>
 
@@ -116,5 +140,14 @@ const doLogout = async () => {
 
 .logo {
   height: 48px;
+}
+
+.header-menu {
+  border-bottom: none !important;
+}
+
+.header-search {
+  max-width: 400px;
+  margin: 0 auto;
 }
 </style>

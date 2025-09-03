@@ -10,6 +10,11 @@ const router = createRouter({
     // 从菜单配置生成的路由
     ...convertToRoutes(menuConfig),
     {
+      path: '/search',
+      name: '搜索结果',
+      component: () => import('@/pages/SearchPage.vue'),
+    },
+    {
       path: '/user/login',
       name: '用户登录',
       component: UserLoginPage,
