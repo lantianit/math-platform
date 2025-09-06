@@ -13,7 +13,7 @@ export const useSearchStore = defineStore('search', () => {
   const hotKeywords = ref<string[]>([])
   const searchHistory = useLocalStorage<string[]>('search-history', [])
   const loading = ref(false)
-  
+
   // 搜索结果
   const searchResults = ref<API.PostVO[]>([])
   const searchTotal = ref(0)
@@ -45,14 +45,14 @@ export const useSearchStore = defineStore('search', () => {
       searchSuggestions.value = []
       return
     }
-    
+
     try {
       loading.value = true
       console.log('Making API call to get search suggestions...')
-      const response = await searchController.getSearchSuggestionsUsingGet({ 
-        keyword: keyword.trim() 
+      const response = await searchController.getSearchSuggestionsUsingGet({
+        keyword: keyword.trim()
       })
-      
+
       console.log('API response:', response)
       if (response?.data?.code === 0 && response.data.data) {
         console.log('Setting search suggestions:', response.data.data)
@@ -80,48 +80,38 @@ export const useSearchStore = defineStore('search', () => {
   /**
    * 搜索帖子
    */
-  const searchPosts = async (
-    keyword: string,
-    page = 1,
-    reset = true,
-    extra?: { category?: string; sortField?: string; sortOrder?: string }
-  ) => {
     if (!keyword.trim()) return
-    
+
     searchLoading.value = true
-    
+
     try {
       if (reset) {
         searchCurrentPage.value = 1
         searchResults.value = []
         searchHasMore.value = true
       }
-      
+
       const response = await searchController.searchPostsUsingPost({
         keyword: keyword.trim(),
         current: page,
-        pageSize: searchPageSize.value,
-        category: extra?.category || '',
-        sortField: extra?.sortField || 'createTime',
-        sortOrder: extra?.sortOrder || 'desc',
       })
-      
+
       if (response?.data?.code === 0 && response.data.data) {
         const newResults = response.data.data.records || []
-        
+
         if (reset) {
           searchResults.value = newResults
         } else {
           searchResults.value.push(...newResults)
         }
-        
+
         searchTotal.value = response.data.data.total || 0
         searchHasMore.value = searchCurrentPage.value < (response.data.data.pages || 1)
-        
+
         if (searchHasMore.value) {
           searchCurrentPage.value++
         }
-        
+
         // 添加到搜索历史
         addToSearchHistory(keyword.trim())
       }
@@ -139,7 +129,7 @@ export const useSearchStore = defineStore('search', () => {
     if (!searchText.value.trim() || searchLoading.value || !searchHasMore.value) {
       return
     }
-    
+
     await searchPosts(searchText.value, searchCurrentPage.value, false)
   }
 
@@ -148,13 +138,13 @@ export const useSearchStore = defineStore('search', () => {
    */
   const addToSearchHistory = (keyword: string) => {
     if (!keyword.trim()) return
-    
+
     // 移除重复项
     const history = searchHistory.value.filter(item => item !== keyword)
-    
+
     // 添加到开头
     history.unshift(keyword)
-    
+
     // 限制历史记录数量
     searchHistory.value = history.slice(0, 10)
   }
@@ -178,10 +168,10 @@ export const useSearchStore = defineStore('search', () => {
    */
   const performSearch = async (keyword: string) => {
     if (!keyword.trim()) return
-    
+
     searchText.value = keyword.trim()
     await searchPosts(keyword.trim())
-    
+
     // 清空搜索建议
     searchSuggestions.value = []
   }
@@ -204,7 +194,7 @@ export const useSearchStore = defineStore('search', () => {
   const handleSearchInputChange = (value: string) => {
     console.log('handleSearchInputChange called with:', value)
     searchText.value = value
-    
+
     if (value.trim()) {
       console.log('Calling debouncedFetchSuggestions with:', value.trim())
       debouncedFetchSuggestions(value.trim())
@@ -223,7 +213,7 @@ export const useSearchStore = defineStore('search', () => {
   // 搜索建议选项（包含历史记录和实时建议）
   const suggestionOptions = computed(() => {
     const options: Array<{ value: string; label: string; type: 'history' | 'suggestion' | 'hot' }> = []
-    
+
     // 如果有输入内容，显示搜索建议
     if (searchText.value.trim() && hasSuggestions.value) {
       searchSuggestions.value.forEach(suggestion => {
@@ -234,7 +224,7 @@ export const useSearchStore = defineStore('search', () => {
         })
       })
     }
-    
+
     // 如果没有输入内容，显示搜索历史
     if (!searchText.value.trim() && hasSearchHistory.value) {
       searchHistory.value.forEach(history => {
@@ -245,7 +235,7 @@ export const useSearchStore = defineStore('search', () => {
         })
       })
     }
-    
+
     return options
   })
 
@@ -262,7 +252,7 @@ export const useSearchStore = defineStore('search', () => {
     searchPageSize,
     searchHasMore,
     searchLoading,
-    
+
     // 方法
     loadHotKeywords,
     fetchSearchSuggestions,
@@ -274,7 +264,7 @@ export const useSearchStore = defineStore('search', () => {
     performSearch,
     clearSearchResults,
     handleSearchInputChange,
-    
+
     // 计算属性
     hasSearchResults,
     hasSearchHistory,

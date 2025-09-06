@@ -14,7 +14,7 @@ export async function addPostUsingPost(body: API.PostAddRequest, options?: { [ke
   })
 }
 
-/** deletePost POST /api/api/post/delete */
+/** deletePost POST /api/post/delete */
 export async function deletePostUsingPost(
   body: API.PostDeleteRequest,
   options?: { [key: string]: any }
@@ -29,7 +29,7 @@ export async function deletePostUsingPost(
   })
 }
 
-/** togglePostFavourite POST /api/api/post/favourite */
+/** togglePostFavourite POST /api/post/favourite */
 export async function togglePostFavouriteUsingPost(
   body: API.PostFavouriteRequest,
   options?: { [key: string]: any }
@@ -44,7 +44,7 @@ export async function togglePostFavouriteUsingPost(
   })
 }
 
-/** getPostById GET /api/api/post/get */
+/** getPostById GET /api/post/get */
 export async function getPostByIdUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getPostByIdUsingGETParams,
@@ -59,7 +59,7 @@ export async function getPostByIdUsingGet(
   })
 }
 
-/** getHotPosts GET /api/api/post/hot */
+/** getHotPosts GET /api/post/hot */
 export async function getHotPostsUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getHotPostsUsingGETParams,
@@ -76,7 +76,7 @@ export async function getHotPostsUsingGet(
   })
 }
 
-/** getLatestPosts GET /api/api/post/latest */
+/** getLatestPosts GET /api/post/latest */
 export async function getLatestPostsUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getLatestPostsUsingGETParams,
@@ -93,7 +93,7 @@ export async function getLatestPostsUsingGet(
   })
 }
 
-/** togglePostLike POST /api/api/post/like */
+/** togglePostLike POST /api/post/like */
 export async function togglePostLikeUsingPost(
   body: API.PostLikeRequest,
   options?: { [key: string]: any }
@@ -108,7 +108,7 @@ export async function togglePostLikeUsingPost(
   })
 }
 
-/** listPostsByPage POST /api/api/post/list/page */
+/** listPostsByPage POST /api/post/list/page */
 export async function listPostsByPageUsingPost(
   body: API.PostQueryRequest,
   options?: { [key: string]: any }
@@ -123,34 +123,7 @@ export async function listPostsByPageUsingPost(
   })
 }
 
-/** listUserPostsByPage POST /api/api/post/user/list/page */
-export async function listUserPostsByPageUsingPost(
-  body: { userId: number; current?: number; pageSize?: number; sortField?: string; sortOrder?: string },
-  options?: { [key: string]: any }
-) {
-  return request<API.BaseResponseIPagePost_>('/api/api/post/user/list/page', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  })
-}
-
-/** getUserPostStats GET /api/api/post/user/stats */
-export async function getUserPostStatsUsingGet(
-  params: { userId: number },
-  options?: { [key: string]: any }
-) {
-  return request<API.BaseResponseUserPostStatsVO_>('/api/api/post/user/stats', {
-    method: 'GET',
-    params,
-    ...(options || {}),
-  })
-}
-
-/** updatePost POST /api/api/post/update */
+/** updatePost POST /api/post/update */
 export async function updatePostUsingPost(
   body: API.PostUpdateRequest,
   options?: { [key: string]: any }

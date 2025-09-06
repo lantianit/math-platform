@@ -15,7 +15,6 @@ USE mathplatform;
 -- ========================================
 
 -- 用户表
-
 CREATE TABLE IF NOT EXISTS user
 (
     id             bigint auto_increment comment '用户ID' primary key,
@@ -24,16 +23,8 @@ CREATE TABLE IF NOT EXISTS user
     userName       varchar(100)                           not null comment '用户昵称',
     userAvatar     varchar(500)                           null comment '用户头像',
     userProfile    varchar(1000)                          null comment '用户简介',
-    userRole       varchar(50)  default 'user'            not null comment '用户角色：user/admin/ban',
-    gender         tinyint      default 0                 not null comment '性别：0-未知 1-男 2-女',
     email          varchar(100)                           null comment '邮箱',
     phone          varchar(20)                            null comment '手机号',
-    birthday       datetime                               null comment '生日',  -- 新增：修复ALTER时缺失的字段
-    location       varchar(100)                           null comment '所在地',-- 新增：修复ALTER时缺失的字段
-    website        varchar(200)                           null comment '个人网站',-- 新增：修复ALTER时缺失的字段
--- 统一字段名：与后续逻辑保持一致
-    followingCount int          default 0                 not null comment '关注数',
-    followerCount  int          default 0                 not null comment '粉丝数',
     postCount      int          default 0                 not null comment '发帖数',
     likeCount      int          default 0                 not null comment '获赞数',
     -- 状态字段
@@ -54,7 +45,6 @@ CREATE TABLE IF NOT EXISTS user
     INDEX idx_isDelete (isDelete)
     ) comment '用户' collate = utf8mb4_unicode_ci;
 
--- 帖子表（修复tags字段格式，支持JSON）
 CREATE TABLE IF NOT EXISTS post
 (
     id             bigint auto_increment comment '帖子ID' primary key,
@@ -63,7 +53,6 @@ CREATE TABLE IF NOT EXISTS post
     contentSummary varchar(500)                           null comment '内容摘要',
     userId         bigint                                 not null comment '发布者ID',
     category       varchar(50)  default 'tech'            not null comment '分类：tech/question/project/share',
-    tags           json                                   null comment '标签（JSON格式，显式指定类型）',-- 修复：从varchar改为json
     images         varchar(2000)                          null comment '图片URL，JSON格式',
     -- 统计字段
     viewCount      int          default 0                 not null comment '浏览量',
@@ -102,7 +91,6 @@ CREATE TABLE IF NOT EXISTS post
     FULLTEXT INDEX ft_title_content (title, content)
     ) comment '帖子' collate = utf8mb4_unicode_ci;
 
--- 以下表结构无错误，保持原逻辑
 -- 评论表
 CREATE TABLE IF NOT EXISTS comment
 (
@@ -279,17 +267,11 @@ CREATE TABLE IF NOT EXISTS user_action_log
     ) comment '用户行为日志' collate = utf8mb4_unicode_ci;
 
 -- ========================================
--- 第二部分: 移除冗余的字段顺序修复（关键修复）
--- ========================================
--- 原脚本中“字段顺序修复”逻辑存在2个问题：
--- 1. 引用未定义字段导致ALTER失败；2. 字段顺序仅影响显示，无业务意义
--- 因此直接移除该部分冗余逻辑，避免执行报错
-
--- ========================================
--- 第三部分: 基础数据初始化（保持原逻辑，无错误）
 -- ========================================
 
--- 插入默认分类（使用INSERT IGNORE避免重复插入）
+-- ========================================
+-- ========================================
+
 INSERT IGNORE INTO category (name, description, icon, color, sort) VALUES
                                                                        ('技术讨论', '分享技术心得、讨论技术问题', 'CodeOutlined', '#1890ff', 1),
                                                                        ('问题求助', '遇到问题时寻求帮助', 'QuestionCircleOutlined', '#52c41a', 2),
@@ -298,7 +280,6 @@ INSERT IGNORE INTO category (name, description, icon, color, sort) VALUES
                                                                        ('资源推荐', '推荐优质学习资源', 'StarOutlined', '#eb2f96', 5),
                                                                        ('闲聊灌水', '日常交流和闲聊', 'CommentOutlined', '#13c2c2', 6);
 
--- 插入默认标签（使用INSERT IGNORE避免重复插入）
 INSERT IGNORE INTO tag (name, color) VALUES
                                          ('前端', '#1890ff'),
                                          ('后端', '#52c41a'),
@@ -311,7 +292,6 @@ INSERT IGNORE INTO tag (name, color) VALUES
                                          ('安全', '#faad14'),
                                          ('架构设计', '#2f54eb');
 
--- 插入系统配置（使用INSERT IGNORE避免重复插入）
 INSERT IGNORE INTO system_config (configKey, configValue, type, description) VALUES
                                                                                  ('site.name', 'Math Platform', 'string', '网站名称'),
                                                                                  ('site.description', '企业级数学论坛平台', 'string', '网站描述'),
@@ -323,10 +303,8 @@ INSERT IGNORE INTO system_config (configKey, configValue, type, description) VAL
                                                                                  ('notification.enabled', 'true', 'boolean', '是否启用通知功能');
 
 -- ========================================
--- 第四部分: 测试数据插入（修复JSON格式依赖）
 -- ========================================
 
--- 检查是否需要插入测试用户（避免重复）
 INSERT INTO user (userAccount, userPassword, userName, userAvatar, userProfile, userRole)
 SELECT * FROM (
                   SELECT 'admin' as userAccount, 'b0dd3697a192885d7c055db46155b26a' as userPassword, '系统管理员' as userName, '/images/avatars/admin.png' as userAvatar, '数学平台系统管理员，负责平台运营和管理工作。' as userProfile, 'admin' as userRole
@@ -351,65 +329,35 @@ SELECT * FROM (
               ) AS tmp
 WHERE NOT EXISTS (SELECT 1 FROM user WHERE userAccount = tmp.userAccount);
 
--- 插入测试帖子数据（修复tags字段JSON格式：从字符串改为JSON对象）
 INSERT INTO post (title, content, contentSummary, userId, category, tags, viewCount, likeCount, commentCount, favouriteCount, status)
 SELECT * FROM (
-                  SELECT
-                      '深入理解微积分的本质：从极限到导数的数学之美' as title,
                       '# 微积分的本质探讨\n\n微积分作为现代数学的基础，其核心思想是通过极限来处理无穷小和无穷大的概念。\n\n## 极限的直观理解\n\n极限不是一个数值的到达，而是一个趋近的过程。当我们说 lim_{x→a} f(x) = L，我们实际上是在描述一个动态过程...\n\n## 导数的几何意义\n\n导数在几何上表示函数图像在某点的切线斜率。这个简单的概念却蕴含着深刻的数学思想...\n\n## 积分的物理意义\n\n积分可以理解为"累积"的概念，在物理学中有着广泛的应用...\n\n这些概念之间的联系构成了微积分的美妙体系。' as content,
                       '微积分作为现代数学的基础，通过极限处理无穷小概念，包含导数的几何意义和积分的物理意义。' as contentSummary,
                       (SELECT id FROM user WHERE userAccount = 'zhangsan' LIMIT 1) as userId,
     'tech' as category,
-    JSON_ARRAY('微积分','导数','积分','数学分析') as tags,  -- 修复：使用JSON_ARRAY生成标准JSON
     1250 as viewCount, 45 as likeCount, 12 as commentCount, 28 as favouriteCount, 1 as status
 UNION ALL
-SELECT
-    '线性代数在机器学习中的应用实例',
     '# 线性代数与机器学习\n\n线性代数是机器学习的数学基础，几乎所有的机器学习算法都离不开线性代数的支撑。\n\n## 向量和矩阵的基本概念\n\n在机器学习中，数据通常以向量或矩阵的形式表示...\n\n## 特征值和特征向量\n\n主成分分析(PCA)是降维的重要方法，其核心就是特征值分解...\n\n## 梯度下降算法\n\n梯度下降算法的数学原理基于向量微积分...\n\n通过具体的Python代码示例，我们可以看到这些数学概念是如何在实际项目中应用的。',
     '线性代数是机器学习的数学基础，包括向量矩阵、特征值分解、梯度下降等核心概念的应用。',
     (SELECT id FROM user WHERE userAccount = 'zhaoliu' LIMIT 1),
                       'tech',
-                      JSON_ARRAY('线性代数','机器学习','PCA','梯度下降'),  -- 修复：标准JSON格式
                       980, 38, 15, 22, 1
 UNION ALL
-SELECT
-    'React 18新特性深度解析：并发渲染的实现原理',
     '# React 18 并发特性详解\n\nReact 18引入了并发渲染，这是React架构的重大升级...\n\n## Concurrent Rendering\n\n并发渲染允许React在渲染过程中暂停和恢复，提供更好的用户体验...\n\n## Suspense的改进\n\n新版本的Suspense支持更多场景...\n\n## 自动批处理\n\nReact 18默认启用自动批处理...',
     'React 18引入并发渲染、改进Suspense、自动批处理等新特性，提升用户体验。',
     (SELECT id FROM user WHERE userAccount = 'wangwu' LIMIT 1),
                       'tech',
-                      JSON_ARRAY('React','前端','并发渲染','JavaScript'),  -- 修复：标准JSON格式
                       756, 29, 8, 15, 1
 UNION ALL
-SELECT
-    '求助：如何理解拉格朗日乘数法的几何意义？',
     '# 拉格朗日乘数法理解困难\n\n我在学习最优化理论时遇到了困难，特别是拉格朗日乘数法的几何意义。\n\n## 我的疑问\n\n1. 为什么梯度向量要平行？\n2. 拉格朗日乘数λ的几何意义是什么？\n3. 如何从直观上理解约束优化？\n\n## 我的理解\n\n目前我知道这是用来解决约束优化问题的方法，但是几何直观还是不太清楚...\n\n希望有经验的同学能够帮忙解答，最好能提供一些直观的例子。',
     '学习拉格朗日乘数法遇到困难，希望了解梯度平行、λ的几何意义等问题。',
     (SELECT id FROM user WHERE userAccount = 'liuyi' LIMIT 1),
                       'question',
-                      JSON_ARRAY('拉格朗日乘数法','最优化','数学分析'),  -- 修复：标准JSON格式
                       423, 8, 11, 5, 1
               ) AS tmp
-WHERE NOT EXISTS (SELECT 1 FROM post LIMIT 1);  -- 仅当无帖子数据时插入
 
 -- ========================================
--- 第五部分: 执行结果验证（新增：确认初始化成功）
 -- ========================================
 
 -- 显示完成信息
-SELECT '✅ Math Platform 数据库初始化完成！' as message;
-
--- 显示核心表数据统计（验证数据插入结果）
 SELECT
-    (SELECT COUNT(*) FROM user) as 总用户数,
-    (SELECT COUNT(*) FROM post) as 总帖子数,
-    (SELECT COUNT(*) FROM comment) as 总评论数,
-    (SELECT COUNT(*) FROM category) as 总分类数,
-    (SELECT COUNT(*) FROM tag) as 总标签数,
-    (SELECT COUNT(*) FROM system_config) as 总配置项数;
-
--- 验证管理员账号是否创建成功
-SELECT
-    IF(EXISTS(SELECT 1 FROM user WHERE userAccount = 'admin' AND userRole = 'admin'),
-       '✅ 管理员账号创建成功（账号：admin，密码：123456）',  -- 注：密码b0dd3697a192885d7c055db46155b26a 对应明文123456
-       '❌ 管理员账号创建失败') as 管理员账号验证结果;
