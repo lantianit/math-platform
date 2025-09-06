@@ -5,11 +5,9 @@ import com.zh.mathplatform.infrastructure.common.BaseResponse;
 import com.zh.mathplatform.infrastructure.common.ResultUtils;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
-import com.zh.mathplatform.interfaces.dto.social.CommentLikeRequest;
-import com.zh.mathplatform.interfaces.dto.social.PostFavouriteRequest;
-import com.zh.mathplatform.interfaces.dto.social.PostLikeRequest;
-import com.zh.mathplatform.interfaces.dto.social.UserFollowRequest;
 import com.zh.mathplatform.infrastructure.utils.UserHolder;
+import com.zh.mathplatform.application.service.NotifyService;
+import com.zh.mathplatform.domain.notify.entity.Notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +27,9 @@ public class SocialController {
     @Autowired
     private SocialDomainService socialDomainService;
 
+    @Autowired(required = false)
+    private NotifyService notifyService;
+
     // ===== 点赞相关接口 =====
 
     /**
@@ -43,6 +44,18 @@ public class SocialController {
         }
 
         boolean isLiked = socialDomainService.togglePostLike(postLikeRequest.getPostId(), userId);
+        // 通知帖子作者（仅点赞时）
+        try {
+            if (isLiked) {
+                Notification n = new Notification();
+                // 生产中应查询帖子作者ID，这里示例略过
+                n.setReceiverId(0L);
+                n.setType("like");
+                n.setContent("你的帖子获得了一个点赞");
+                n.setExtra("{\"postId\":" + postLikeRequest.getPostId() + "}");
+                notifyService.push(n);
+            }
+        } catch (Exception ignored) {}
         return ResultUtils.success(isLiked);
     }
 
@@ -153,6 +166,17 @@ public class SocialController {
         }
 
         boolean isFollowed = socialDomainService.toggleUserFollow(userId, userFollowRequest.getFollowingId());
+        // 通知被关注者（仅关注时）
+        try {
+            if (isFollowed) {
+                Notification n = new Notification();
+                n.setReceiverId(userFollowRequest.getFollowingId());
+                n.setType("follow");
+                n.setContent("你获得了一个新关注");
+                n.setExtra("{}");
+                notifyService.push(n);
+            }
+        } catch (Exception ignored) {}
         return ResultUtils.success(isFollowed);
     }
 

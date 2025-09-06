@@ -12,6 +12,8 @@ import com.zh.mathplatform.domain.post.repository.PostRepository;
 import com.zh.mathplatform.domain.social.service.SocialDomainService;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
+import com.zh.mathplatform.application.service.NotifyService;
+import com.zh.mathplatform.domain.notify.entity.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,9 @@ public class CommentApplicationServiceImpl implements CommentApplicationService 
     @Autowired
     private SocialDomainService socialDomainService;
 
+    @Autowired(required = false)
+    private NotifyService notifyService;
+
     @Override
     @Transactional
     public Comment addComment(String content, Long postId, Long userId) {
@@ -56,6 +61,16 @@ public class CommentApplicationServiceImpl implements CommentApplicationService 
 
         // 增加帖子评论数
         postRepository.increaseCommentCount(postId);
+
+        // 推送通知给帖子作者
+        try {
+            Notification n = new Notification();
+            n.setReceiverId(post.getUserId());
+            n.setType("comment");
+            n.setContent("有人评论了你的帖子: " + (content.length() > 20 ? content.substring(0, 20) + "..." : content));
+            n.setExtra("{\"postId\":" + postId + "}");
+            notifyService.push(n);
+        } catch (Exception ignored) {}
 
         return comment;
     }
@@ -86,6 +101,16 @@ public class CommentApplicationServiceImpl implements CommentApplicationService 
 
         // 增加帖子评论数
         postRepository.increaseCommentCount(postId);
+
+        // 通知父评论作者
+        try {
+            Notification n = new Notification();
+            n.setReceiverId(parentComment.getUserId());
+            n.setType("reply");
+            n.setContent("有人回复了你的评论: " + (content.length() > 20 ? content.substring(0, 20) + "..." : content));
+            n.setExtra("{\"postId\":" + postId + ",\"parentId\":" + parentId + "}");
+            notifyService.push(n);
+        } catch (Exception ignored) {}
 
         return replyComment;
     }

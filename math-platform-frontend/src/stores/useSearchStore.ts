@@ -80,6 +80,12 @@ export const useSearchStore = defineStore('search', () => {
   /**
    * 搜索帖子
    */
+  const searchPosts = async (
+    keyword: string,
+    page = 1,
+    reset = true,
+    extra?: { category?: string; sortField?: string; sortOrder?: string }
+  ) => {
     if (!keyword.trim()) return
 
     searchLoading.value = true
@@ -94,6 +100,10 @@ export const useSearchStore = defineStore('search', () => {
       const response = await searchController.searchPostsUsingPost({
         keyword: keyword.trim(),
         current: page,
+        pageSize: searchPageSize.value,
+        category: extra?.category || '',
+        sortField: extra?.sortField || 'createTime',
+        sortOrder: extra?.sortOrder || 'desc',
       })
 
       if (response?.data?.code === 0 && response.data.data) {

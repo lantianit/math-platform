@@ -10,6 +10,21 @@ const router = createRouter({
     // 从菜单配置生成的路由
     ...convertToRoutes(menuConfig),
     {
+      path: '/post/create',
+      name: '发布帖子',
+      component: () => import('@/pages/PostCreatePage.vue'),
+    },
+    {
+      path: '/post/:id',
+      name: '帖子详情',
+      component: () => import('@/pages/PostDetailPage.vue'),
+    },
+    {
+      path: '/search',
+      name: '搜索结果',
+      component: () => import('@/pages/SearchPage.vue'),
+    },
+    {
       path: '/user/login',
       name: '用户登录',
       component: UserLoginPage,
@@ -20,12 +35,27 @@ const router = createRouter({
       component: UserRegisterPage,
     },
     {
+      path: '/user/edit',
+      name: '资料编辑',
+      component: () => import('@/pages/user/UserEditPage.vue'),
+    },
+    {
+      path: '/user/:id',
+      name: '用户主页',
+      component: () => import('@/pages/user/UserProfilePage.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
+    },
+    {
+      path: '/notifications',
+      name: '通知中心',
+      component: () => import('@/pages/NotificationsPage.vue'),
     },
   ],
 })
