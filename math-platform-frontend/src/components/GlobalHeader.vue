@@ -31,9 +31,13 @@
         </a-row>
       </a-col>
       <!-- 用户信息展示栏 -->
-      <a-col flex="120px">
+      <a-col flex="320px">
         <div class="user-login-status">
-          <div v-if="loginUserStore.loginUser.id">
+          <a-space v-if="loginUserStore.loginUser.id" align="center">
+            <a-badge :count="unreadCount" offset="[0,8]">
+              <a-button type="text" @click="goNotifications">通知</a-button>
+            </a-badge>
+            <a-button type="primary" @click="goCreatePost">发布</a-button>
             <a-dropdown>
               <a-space>
                 <a-avatar :src="loginUserStore.loginUser.userAvatar" />
@@ -42,10 +46,13 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item>
-                    <router-link to="/my_space">
+                    <router-link :to="`/user/${loginUserStore.loginUser.id}`">
                       <UserOutlined />
                       我的空间
                     </router-link>
+                  </a-menu-item>
+                  <a-menu-item>
+                    <router-link to="/user/edit">资料编辑</router-link>
                   </a-menu-item>
                   <a-menu-item @click="doLogout">
                     <LogoutOutlined />
@@ -54,7 +61,7 @@
                 </a-menu>
               </template>
             </a-dropdown>
-          </div>
+          </a-space>
           <div v-else>
             <a-button type="primary" href="/user/login">登录</a-button>
           </div>
@@ -72,6 +79,7 @@ import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/userController.ts'
 import { menuConfig, filterMenusByPermission, convertToAntMenuItems } from '@/constants/menu.ts'
 import SearchBox from './SearchBox.vue'
+import { getUnreadCountUsingGet } from '@/api/notifyController'
 
 const loginUserStore = useLoginUserStore()
 
@@ -123,6 +131,25 @@ const handleSearch = (keyword: string) => {
   }
 }
 
+// 未读通知数
+const unreadCount = ref(0)
+const refreshUnread = async () => {
+  try {
+    const res = await getUnreadCountUsingGet()
+    if (res?.data?.code === 0) unreadCount.value = Number(res.data.data || 0)
+  } catch {}
+}
+
+const goNotifications = () => {
+  router.push('/notifications')
+}
+
+const goCreatePost = () => {
+  router.push('/post/create')
+}
+
+refreshUnread()
+
 
 </script>
 
@@ -149,5 +176,12 @@ const handleSearch = (keyword: string) => {
 .header-search {
   max-width: 400px;
   margin: 0 auto;
+}
+
+.user-login-status {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
 }
 </style>

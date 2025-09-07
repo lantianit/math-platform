@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <!-- 搜索建议 */
+      <!-- 搜索建议 -->
       <div v-if="searchText" class="suggestion-section">
         <div class="suggestion-header">
           <span class="suggestion-title">搜索建议</span>
@@ -362,6 +362,19 @@ const highlightKeyword = (text: string) => {
 watch(searchText, (newValue) => {
   console.log('searchText changed to:', newValue)
   searchStore.handleSearchInputChange(newValue)
+  // 有输入时确保面板打开
+  if (newValue && newValue.trim().length > 0) {
+    showSuggestionPanel.value = true
+  }
+})
+
+// 监听热门和建议数据变化，确保面板在有内容时展开
+watch([hotKeywords, searchSuggestions], () => {
+  if (focused.value || (searchText.value && searchText.value.trim().length > 0)) {
+    if (hasAnyContent.value) {
+      showSuggestionPanel.value = true
+    }
+  }
 })
 
 // 自动聚焦

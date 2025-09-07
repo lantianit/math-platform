@@ -24,6 +24,9 @@ import GlobalHeader from '@/components/GlobalHeader.vue'
   background: white;
   color: unset;
   margin-bottom: 1px;
+  overflow: visible; /* 允许搜索建议面板溢出显示 */
+  position: relative;
+  z-index: 10;
 }
 
 #basicLayout :deep(.ant-menu-root) {
