@@ -199,6 +199,7 @@ import {
   MoreOutlined
 } from '@ant-design/icons-vue'
 import { usePostStore } from '@/stores/usePostStore'
+import { getCategoryColor, getCategoryName } from '@/constants/category'
 
 // 配置dayjs
 dayjs.extend(relativeTime)
@@ -236,26 +237,26 @@ const favouriteLoading = ref(false)
 
 // 计算属性
 const postImages = computed(() => {
+  const images: any = (props.post as any).images
+  if (!images) return []
+  if (Array.isArray(images)) return images
   try {
-    const images = props.post.images
-    if (Array.isArray(images)) {
-      return images
-    }
-    return images ? JSON.parse(images as string) : []
+    const arr = JSON.parse(images as string)
+    return Array.isArray(arr) ? arr : String(images).split(',').filter(Boolean)
   } catch {
-    return []
+    return String(images).split(',').filter(Boolean)
   }
 })
 
 const postTags = computed(() => {
+  const tags: any = (props.post as any).tags
+  if (!tags) return []
+  if (Array.isArray(tags)) return tags
   try {
-    const tags = props.post.tags
-    if (Array.isArray(tags)) {
-      return tags
-    }
-    return tags ? JSON.parse(tags as string) : []
+    const arr = JSON.parse(tags as string)
+    return Array.isArray(arr) ? arr : String(tags).split(',').filter(Boolean)
   } catch {
-    return []
+    return String(tags).split(',').filter(Boolean)
   }
 })
 
@@ -274,25 +275,9 @@ const formatCount = (count?: number) => {
   return `${(count / 10000).toFixed(1)}w`
 }
 
-const getCategoryName = (category?: string) => {
-  const categoryMap: Record<string, string> = {
-    tech: '技术',
-    question: '问题',
-    project: '项目',
-    share: '分享'
-  }
-  return categoryMap[category || 'tech'] || '其他'
-}
+// 使用统一分类工具函数
 
-const getCategoryColor = (category?: string) => {
-  const colorMap: Record<string, string> = {
-    tech: 'blue',
-    question: 'orange',
-    project: 'green',
-    share: 'purple'
-  }
-  return colorMap[category || 'tech'] || 'default'
-}
+// 使用统一分类工具函数
 
 const handleCardClick = () => {
   emit('click', props.post)

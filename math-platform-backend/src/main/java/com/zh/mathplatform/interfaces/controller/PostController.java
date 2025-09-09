@@ -19,12 +19,14 @@ import java.util.List;
  * 帖子接口
  */
 @RestController
-@RequestMapping("/api/post")
+@RequestMapping("/post")
 @Slf4j
 public class PostController {
 
     @Autowired
     private PostApplicationService postApplicationService;
+    @Autowired
+    private com.zh.mathplatform.infrastructure.utils.PostVOConverter postVOConverter;
 
     /**
      * 发布帖子
@@ -104,7 +106,7 @@ public class PostController {
      * 根据ID获取帖子详情
      */
     @GetMapping("/get")
-    public BaseResponse<Post> getPostById(@RequestParam Long id, HttpServletRequest request) {
+    public BaseResponse<com.zh.mathplatform.interfaces.vo.post.PostVO> getPostById(@RequestParam Long id, HttpServletRequest request) {
         if (id == null || id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -118,7 +120,8 @@ public class PostController {
             log.error("增加浏览量失败", e);
         }
 
-        return ResultUtils.success(post);
+        var postVO = postVOConverter.convertToVO(post);
+        return ResultUtils.success(postVO);
     }
 
     /**

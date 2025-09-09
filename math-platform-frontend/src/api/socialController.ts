@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from '@/request'
 
-/** togglePostFavourite POST /api/api/social/post/favourite */
+/** togglePostFavourite POST /api/social/post/favourite */
 export async function togglePostFavouriteUsingPost1(
   body: API.PostFavouriteRequest1,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/social/post/favourite', {
+  return request<API.BaseResponseBoolean_>('/api/social/post/favourite', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,21 +17,21 @@ export async function togglePostFavouriteUsingPost1(
   })
 }
 
-/** getFavouritePostIds GET /api/api/social/post/favourited */
+/** getFavouritePostIds GET /api/social/post/favourited */
 export async function getFavouritePostIdsUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseListLong_>('/api/api/social/post/favourited', {
+  return request<API.BaseResponseListLong_>('/api/social/post/favourited', {
     method: 'GET',
     ...(options || {}),
   })
 }
 
-/** isPostFavouritedByUser GET /api/api/social/post/isFavourited */
+/** isPostFavouritedByUser GET /api/social/post/isFavourited */
 export async function isPostFavouritedByUserUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.isPostFavouritedByUserUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/social/post/isFavourited', {
+  return request<API.BaseResponseBoolean_>('/api/social/post/isFavourited', {
     method: 'GET',
     params: {
       ...params,
@@ -40,13 +40,13 @@ export async function isPostFavouritedByUserUsingGet(
   })
 }
 
-/** isPostLikedByUser GET /api/api/social/post/isLiked */
+/** isPostLikedByUser GET /api/social/post/isLiked */
 export async function isPostLikedByUserUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.isPostLikedByUserUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/social/post/isLiked', {
+  return request<API.BaseResponseBoolean_>('/api/social/post/isLiked', {
     method: 'GET',
     params: {
       ...params,
@@ -55,12 +55,12 @@ export async function isPostLikedByUserUsingGet(
   })
 }
 
-/** togglePostLike POST /api/api/social/post/like */
+/** togglePostLike POST /api/social/post/like */
 export async function togglePostLikeUsingPost1(
   body: API.PostLikeRequest1,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/social/post/like', {
+  return request<API.BaseResponseBoolean_>('/api/social/post/like', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -70,48 +70,48 @@ export async function togglePostLikeUsingPost1(
   })
 }
 
-/** getLikedPostIds GET /api/api/social/post/liked */
+/** getLikedPostIds GET /api/social/post/liked */
 export async function getLikedPostIdsUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseListLong_>('/api/api/social/post/liked', {
+  return request<API.BaseResponseListLong_>('/api/social/post/liked', {
     method: 'GET',
     ...(options || {}),
   })
 }
 
-/** getFollowerCountByUserId GET /api/api/social/user/${param0}/followers/count */
+/** getFollowerCountByUserId GET /api/social/user/${param0}/followers/count */
 export async function getFollowerCountByUserIdUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getFollowerCountByUserIdUsingGETParams,
   options?: { [key: string]: any }
 ) {
   const { userId: param0, ...queryParams } = params
-  return request<API.BaseResponseLong_>(`/api/api/social/user/${param0}/followers/count`, {
+  return request<API.BaseResponseLong_>(`/api/social/user/${param0}/followers/count`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
   })
 }
 
-/** getFollowingCountByUserId GET /api/api/social/user/${param0}/following/count */
+/** getFollowingCountByUserId GET /api/social/user/${param0}/following/count */
 export async function getFollowingCountByUserIdUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getFollowingCountByUserIdUsingGETParams,
   options?: { [key: string]: any }
 ) {
   const { userId: param0, ...queryParams } = params
-  return request<API.BaseResponseLong_>(`/api/api/social/user/${param0}/following/count`, {
+  return request<API.BaseResponseLong_>(`/api/social/user/${param0}/following/count`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
   })
 }
 
-/** toggleUserFollow POST /api/api/social/user/follow */
+/** toggleUserFollow POST /api/social/user/follow */
 export async function toggleUserFollowUsingPost(
   body: API.UserFollowRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/social/user/follow', {
+  return request<API.BaseResponseBoolean_>('/api/social/user/follow', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -121,45 +121,45 @@ export async function toggleUserFollowUsingPost(
   })
 }
 
-/** getFollowerIds GET /api/api/social/user/followers */
+/** getFollowerIds GET /api/social/user/followers */
 export async function getFollowerIdsUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseListLong_>('/api/api/social/user/followers', {
+  return request<API.BaseResponseListLong_>('/api/social/user/followers', {
     method: 'GET',
     ...(options || {}),
   })
 }
 
-/** getFollowerCount GET /api/api/social/user/followers/count */
+/** getFollowerCount GET /api/social/user/followers/count */
 export async function getFollowerCountUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseLong_>('/api/api/social/user/followers/count', {
+  return request<API.BaseResponseLong_>('/api/social/user/followers/count', {
     method: 'GET',
     ...(options || {}),
   })
 }
 
-/** getFollowingIds GET /api/api/social/user/following */
+/** getFollowingIds GET /api/social/user/following */
 export async function getFollowingIdsUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseListLong_>('/api/api/social/user/following', {
+  return request<API.BaseResponseListLong_>('/api/social/user/following', {
     method: 'GET',
     ...(options || {}),
   })
 }
 
-/** getFollowingCount GET /api/api/social/user/following/count */
+/** getFollowingCount GET /api/social/user/following/count */
 export async function getFollowingCountUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseLong_>('/api/api/social/user/following/count', {
+  return request<API.BaseResponseLong_>('/api/social/user/following/count', {
     method: 'GET',
     ...(options || {}),
   })
 }
 
-/** isUserFollowedByUser GET /api/api/social/user/isFollowed */
+/** isUserFollowedByUser GET /api/social/user/isFollowed */
 export async function isUserFollowedByUserUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.isUserFollowedByUserUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/social/user/isFollowed', {
+  return request<API.BaseResponseBoolean_>('/api/social/user/isFollowed', {
     method: 'GET',
     params: {
       ...params,

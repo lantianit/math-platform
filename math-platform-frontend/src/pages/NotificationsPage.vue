@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { h, onMounted, ref } from 'vue'
-import { listNotificationsUsingGet, getUnreadCountUsingGet, markAllReadUsingPost } from '@/api/notifyController'
+import { listUsingGet, unreadCountUsingGet, markAllReadUsingPost } from '@/api/notifyController'
 
 const list = ref<any[]>([])
 const loading = ref(false)
@@ -28,8 +28,8 @@ const load = async () => {
   loading.value = true
   try {
     const [l, c] = await Promise.all([
-      listNotificationsUsingGet({ limit: 100 }),
-      getUnreadCountUsingGet(),
+      listUsingGet({ limit: 100 }),
+      unreadCountUsingGet(),
     ])
     if (l?.data?.code === 0) list.value = l.data.data || []
     if (c?.data?.code === 0) unreadCount.value = Number(c.data.data || 0)

@@ -20,7 +20,7 @@ import java.util.List;
  * 评论接口
  */
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/comment")
 @Slf4j
 public class CommentController {
 

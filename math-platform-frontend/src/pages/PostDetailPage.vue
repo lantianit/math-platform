@@ -15,12 +15,12 @@
               <span class="meta-time">{{ formatTime(post.createTime) }}</span>
             </div>
 
-            <div class="post-content" v-html="formatContent(post.content)"></div>
+            <div class="post-content" v-html="renderMd(post.content || '')"></div>
 
             <div v-if="post.images" class="post-images">
               <a-image-preview-group>
                 <a-image
-                  v-for="img in splitTags(post.images)"
+                  v-for="img in splitImages(post.images as any)"
                   :key="img"
                   :src="img"
                   :width="120"
@@ -173,6 +173,7 @@ import * as postController from '@/api/postController'
 import * as socialController from '@/api/socialController'
 import * as commentController from '@/api/commentController'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
+import { renderMarkdownWithKatex } from '@/utils/markdown'
 
 const route = useRoute()
 const postId = Number(route.params.id)
@@ -194,8 +195,27 @@ const current = ref(1)
 const pageSize = ref(10)
 const hasMoreComments = ref(true)
 
-const splitTags = (tags?: string) => (tags ? tags.split(',').filter(Boolean) : [])
-const formatContent = (content?: string) => (content || '').replace(/\n/g, '<br/>')
+const splitTags = (tags?: string | string[]) => {
+  if (!tags) return []
+  if (Array.isArray(tags)) return tags
+  try {
+    const arr = JSON.parse(tags)
+    return Array.isArray(arr) ? arr : (tags ? tags.split(',').filter(Boolean) : [])
+  } catch {
+    return tags.split(',').filter(Boolean)
+  }
+}
+const splitImages = (images?: string | string[]) => {
+  if (!images) return []
+  if (Array.isArray(images)) return images
+  try {
+    const arr = JSON.parse(images)
+    return Array.isArray(arr) ? arr : (images ? images.split(',').filter(Boolean) : [])
+  } catch {
+    return images.split(',').filter(Boolean)
+  }
+}
+const renderMd = (md: string) => renderMarkdownWithKatex(md)
 const formatTime = (val: any) => {
   try {
     const d = new Date(val)

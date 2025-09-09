@@ -328,36 +328,3 @@ SELECT * FROM (
                   SELECT 'liuyi', 'b0dd3697a192885d7c055db46155b26a', '刘一', '/images/avatars/user10.png', '在读研究生，对数论和代数几何有深入研究。', 'user'
               ) AS tmp
 WHERE NOT EXISTS (SELECT 1 FROM user WHERE userAccount = tmp.userAccount);
-
-INSERT INTO post (title, content, contentSummary, userId, category, tags, viewCount, likeCount, commentCount, favouriteCount, status)
-SELECT * FROM (
-                      '# 微积分的本质探讨\n\n微积分作为现代数学的基础，其核心思想是通过极限来处理无穷小和无穷大的概念。\n\n## 极限的直观理解\n\n极限不是一个数值的到达，而是一个趋近的过程。当我们说 lim_{x→a} f(x) = L，我们实际上是在描述一个动态过程...\n\n## 导数的几何意义\n\n导数在几何上表示函数图像在某点的切线斜率。这个简单的概念却蕴含着深刻的数学思想...\n\n## 积分的物理意义\n\n积分可以理解为"累积"的概念，在物理学中有着广泛的应用...\n\n这些概念之间的联系构成了微积分的美妙体系。' as content,
-                      '微积分作为现代数学的基础，通过极限处理无穷小概念，包含导数的几何意义和积分的物理意义。' as contentSummary,
-                      (SELECT id FROM user WHERE userAccount = 'zhangsan' LIMIT 1) as userId,
-    'tech' as category,
-    1250 as viewCount, 45 as likeCount, 12 as commentCount, 28 as favouriteCount, 1 as status
-UNION ALL
-    '# 线性代数与机器学习\n\n线性代数是机器学习的数学基础，几乎所有的机器学习算法都离不开线性代数的支撑。\n\n## 向量和矩阵的基本概念\n\n在机器学习中，数据通常以向量或矩阵的形式表示...\n\n## 特征值和特征向量\n\n主成分分析(PCA)是降维的重要方法，其核心就是特征值分解...\n\n## 梯度下降算法\n\n梯度下降算法的数学原理基于向量微积分...\n\n通过具体的Python代码示例，我们可以看到这些数学概念是如何在实际项目中应用的。',
-    '线性代数是机器学习的数学基础，包括向量矩阵、特征值分解、梯度下降等核心概念的应用。',
-    (SELECT id FROM user WHERE userAccount = 'zhaoliu' LIMIT 1),
-                      'tech',
-                      980, 38, 15, 22, 1
-UNION ALL
-    '# React 18 并发特性详解\n\nReact 18引入了并发渲染，这是React架构的重大升级...\n\n## Concurrent Rendering\n\n并发渲染允许React在渲染过程中暂停和恢复，提供更好的用户体验...\n\n## Suspense的改进\n\n新版本的Suspense支持更多场景...\n\n## 自动批处理\n\nReact 18默认启用自动批处理...',
-    'React 18引入并发渲染、改进Suspense、自动批处理等新特性，提升用户体验。',
-    (SELECT id FROM user WHERE userAccount = 'wangwu' LIMIT 1),
-                      'tech',
-                      756, 29, 8, 15, 1
-UNION ALL
-    '# 拉格朗日乘数法理解困难\n\n我在学习最优化理论时遇到了困难，特别是拉格朗日乘数法的几何意义。\n\n## 我的疑问\n\n1. 为什么梯度向量要平行？\n2. 拉格朗日乘数λ的几何意义是什么？\n3. 如何从直观上理解约束优化？\n\n## 我的理解\n\n目前我知道这是用来解决约束优化问题的方法，但是几何直观还是不太清楚...\n\n希望有经验的同学能够帮忙解答，最好能提供一些直观的例子。',
-    '学习拉格朗日乘数法遇到困难，希望了解梯度平行、λ的几何意义等问题。',
-    (SELECT id FROM user WHERE userAccount = 'liuyi' LIMIT 1),
-                      'question',
-                      423, 8, 11, 5, 1
-              ) AS tmp
-
--- ========================================
--- ========================================
-
--- 显示完成信息
-SELECT

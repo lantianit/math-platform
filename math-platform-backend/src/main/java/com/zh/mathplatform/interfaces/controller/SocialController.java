@@ -20,7 +20,7 @@ import java.util.List;
  * 社交交互接口
  */
 @RestController
-@RequestMapping("/api/social")
+@RequestMapping("/social")
 @Slf4j
 public class SocialController {
 

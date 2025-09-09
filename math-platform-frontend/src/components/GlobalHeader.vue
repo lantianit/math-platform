@@ -79,7 +79,7 @@ import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/userController.ts'
 import { menuConfig, filterMenusByPermission, convertToAntMenuItems } from '@/constants/menu.ts'
 import SearchBox from './SearchBox.vue'
-import { getUnreadCountUsingGet } from '@/api/notifyController'
+import { unreadCountUsingGet } from '@/api/notifyController'
 
 const loginUserStore = useLoginUserStore()
 
@@ -135,7 +135,7 @@ const handleSearch = (keyword: string) => {
 const unreadCount = ref(0)
 const refreshUnread = async () => {
   try {
-    const res = await getUnreadCountUsingGet()
+    const res = await unreadCountUsingGet()
     if (res?.data?.code === 0) unreadCount.value = Number(res.data.data || 0)
   } catch {}
 }

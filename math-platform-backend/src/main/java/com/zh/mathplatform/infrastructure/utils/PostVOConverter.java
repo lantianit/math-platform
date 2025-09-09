@@ -8,6 +8,8 @@ import com.zh.mathplatform.domain.post.entity.Post;
 import com.zh.mathplatform.domain.user.entity.User;
 import com.zh.mathplatform.infrastructure.mapper.UserMapper;
 import com.zh.mathplatform.interfaces.vo.post.PostVO;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ public class PostVOConverter {
     @Autowired
     private UserMapper userMapper;
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     /**
      * 转换单个Post为PostVO
      */
@@ -37,6 +41,18 @@ public class PostVOConverter {
 
         PostVO postVO = new PostVO();
         BeanUtil.copyProperties(post, postVO);
+
+        // 解析 JSON 字段到数组
+        try {
+            if (post.getTags() != null && !post.getTags().isEmpty()) {
+                postVO.setTags(OBJECT_MAPPER.readValue(post.getTags(), new TypeReference<java.util.List<String>>() {}));
+            }
+        } catch (Exception ignored) {}
+        try {
+            if (post.getImages() != null && !post.getImages().isEmpty()) {
+                postVO.setImages(OBJECT_MAPPER.readValue(post.getImages(), new TypeReference<java.util.List<String>>() {}));
+            }
+        } catch (Exception ignored) {}
 
         // 获取用户信息并设置到PostVO中（仅选择必要字段，避免缺失列报错）
         QueryWrapper<User> oneWrapper = new QueryWrapper<>();
@@ -82,6 +98,18 @@ public class PostVOConverter {
                         postVO.setUserName(user.getUserName());
                         postVO.setUserAvatar(user.getUserAvatar());
                     }
+
+                    // 解析 JSON 字段到数组
+                    try {
+                        if (post.getTags() != null && !post.getTags().isEmpty()) {
+                            postVO.setTags(OBJECT_MAPPER.readValue(post.getTags(), new TypeReference<java.util.List<String>>() {}));
+                        }
+                    } catch (Exception ignored) {}
+                    try {
+                        if (post.getImages() != null && !post.getImages().isEmpty()) {
+                            postVO.setImages(OBJECT_MAPPER.readValue(post.getImages(), new TypeReference<java.util.List<String>>() {}));
+                        }
+                    } catch (Exception ignored) {}
 
                     return postVO;
                 })

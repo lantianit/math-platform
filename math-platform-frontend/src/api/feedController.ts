@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from '@/request'
 
-/** getPostsByCategory POST /api/api/feed/category/${param0} */
+/** getPostsByCategory POST /api/feed/category/${param0} */
 export async function getPostsByCategoryUsingPost(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getPostsByCategoryUsingPOSTParams,
@@ -10,7 +10,7 @@ export async function getPostsByCategoryUsingPost(
   options?: { [key: string]: any }
 ) {
   const { category: param0, ...queryParams } = params
-  return request<API.BaseResponseIPagePostVO_>(`/api/api/feed/category/${param0}`, {
+  return request<API.BaseResponseIPagePostVO_>(`/api/feed/category/${param0}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -21,12 +21,12 @@ export async function getPostsByCategoryUsingPost(
   })
 }
 
-/** getFollowingPosts POST /api/api/feed/following */
+/** getFollowingPosts POST /api/feed/following */
 export async function getFollowingPostsUsingPost(
   body: API.PageRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseIPagePostVO_>('/api/api/feed/following', {
+  return request<API.BaseResponseIPagePostVO_>('/api/feed/following', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,12 +36,12 @@ export async function getFollowingPostsUsingPost(
   })
 }
 
-/** getHotPosts POST /api/api/feed/hot */
+/** getHotPosts POST /api/feed/hot */
 export async function getHotPostsUsingPost(
   body: API.PageRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseIPagePostVO_>('/api/api/feed/hot', {
+  return request<API.BaseResponseIPagePostVO_>('/api/feed/hot', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -51,12 +51,12 @@ export async function getHotPostsUsingPost(
   })
 }
 
-/** getLatestPosts POST /api/api/feed/latest */
+/** getLatestPosts POST /api/feed/latest */
 export async function getLatestPostsUsingPost(
   body: API.PageRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseIPagePostVO_>('/api/api/feed/latest', {
+  return request<API.BaseResponseIPagePostVO_>('/api/feed/latest', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -66,12 +66,12 @@ export async function getLatestPostsUsingPost(
   })
 }
 
-/** getRecommendPosts POST /api/api/feed/recommend */
+/** getRecommendPosts POST /api/feed/recommend */
 export async function getRecommendPostsUsingPost(
   body: API.PageRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseIPagePostVO_>('/api/api/feed/recommend', {
+  return request<API.BaseResponseIPagePostVO_>('/api/feed/recommend', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

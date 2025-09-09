@@ -2,16 +2,36 @@
 /* eslint-disable */
 import request from '@/request'
 
-/** upload POST /api/api/file/upload */
-export async function uploadUsingPost(form: FormData, options?: { [key: string]: any }) {
-  return request<API.BaseResponseListString_>('/api/api/file/upload', {
+/** upload POST /api/file/upload */
+export async function uploadUsingPost(
+  body: {
+    /** file */
+    file: any[]
+  },
+  options?: { [key: string]: any }
+) {
+  const formData = new FormData()
+
+  Object.keys(body).forEach((ele) => {
+    const item = (body as any)[ele]
+
+    if (item !== undefined && item !== null) {
+      if (typeof item === 'object' && !(item instanceof File)) {
+        if (item instanceof Array) {
+          item.forEach((f) => formData.append(ele, f || ''))
+        } else {
+          formData.append(ele, JSON.stringify(item))
+        }
+      } else {
+        formData.append(ele, item)
+      }
+    }
+  })
+
+  return request<API.BaseResponseListString_>('/api/file/upload', {
     method: 'POST',
-    headers: {
-      // 让浏览器自动设置 multipart 边界
-    },
-    data: form,
+    data: formData,
+    requestType: 'form',
     ...(options || {}),
   })
 }
-
-

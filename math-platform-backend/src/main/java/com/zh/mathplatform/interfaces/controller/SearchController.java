@@ -25,7 +25,7 @@ import java.io.Serializable;
  * 搜索功能接口
  */
 @RestController
-@RequestMapping("/api/search")
+@RequestMapping("/search")
 @Slf4j
 public class SearchController {
 

@@ -2,20 +2,20 @@
 /* eslint-disable */
 import request from '@/request'
 
-/** getHotKeywords GET /api/api/search/hot-keywords */
+/** getHotKeywords GET /api/search/hot-keywords */
 export async function getHotKeywordsUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseArrayString_>('/api/api/search/hot-keywords', {
+  return request<API.BaseResponseArrayString_>('/api/search/hot-keywords', {
     method: 'GET',
     ...(options || {}),
   })
 }
 
-/** searchPosts POST /api/api/search/posts */
+/** searchPosts POST /api/search/posts */
 export async function searchPostsUsingPost(
   body: API.SearchRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseIPagePostVO_>('/api/api/search/posts', {
+  return request<API.BaseResponseIPagePostVO_>('/api/search/posts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -25,13 +25,13 @@ export async function searchPostsUsingPost(
   })
 }
 
-/** getSearchSuggestions GET /api/api/search/suggestions */
+/** getSearchSuggestions GET /api/search/suggestions */
 export async function getSearchSuggestionsUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getSearchSuggestionsUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseArrayString_>('/api/api/search/suggestions', {
+  return request<API.BaseResponseArrayString_>('/api/search/suggestions', {
     method: 'GET',
     params: {
       ...params,

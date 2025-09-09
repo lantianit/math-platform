@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notify")
+@RequestMapping("/notify")
 public class NotifyController {
 
     @Autowired

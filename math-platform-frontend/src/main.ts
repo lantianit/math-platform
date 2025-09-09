@@ -6,6 +6,8 @@ import router from './router'
 import Antd from 'ant-design-vue'
 // 移除vue-cropper相关导入，暂时不需要
 import 'ant-design-vue/dist/reset.css'
+import 'katex/dist/katex.min.css'
+import 'highlight.js/styles/github.min.css'
 import '@/access.ts'
 
 const app = createApp(App)

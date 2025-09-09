@@ -8,9 +8,9 @@
 
         <a-form-item label="分类">
           <a-select v-model:value="form.category" placeholder="请选择分类" allow-clear>
-            <a-select-option value="TECH">技术交流</a-select-option>
-            <a-select-option value="QNA">问答求助</a-select-option>
-            <a-select-option value="SHARE">经验分享</a-select-option>
+            <a-select-option v-for="opt in categoryOptions" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </a-select-option>
           </a-select>
         </a-form-item>
 
@@ -25,7 +25,7 @@
         </a-form-item>
 
         <a-form-item label="内容" required>
-          <a-textarea v-model:value="form.content" :rows="12" placeholder="请输入正文（支持换行）" />
+          <RichMarkdownEditor v-model:modelValue="form.content" :rows="16" />
         </a-form-item>
 
         <a-form-item label="图片">
@@ -47,6 +47,17 @@
         <a-form-item :wrapper-col="{ span: 20, offset: 4 }">
           <a-space>
             <a-button @click="goBack">返回</a-button>
+            <a-button @click="saveDraft">保存草稿</a-button>
+            <a-dropdown>
+              <a-button>历史版本</a-button>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item v-for="h in historyList" :key="h.time" @click="restoreHistory(h)">
+                    {{ new Date(h.time).toLocaleString() }} - {{ h.title || '无标题' }}
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
             <a-button type="primary" :loading="submitting" @click="handleSubmit">发布</a-button>
           </a-space>
         </a-form-item>
@@ -56,24 +67,31 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, Upload } from 'ant-design-vue'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import * as fileController from '@/api/fileController'
 import * as postController from '@/api/postController'
+import RichMarkdownEditor from '@/components/RichMarkdownEditor.vue'
 
 const router = useRouter()
 
+import { categoryOptions } from '@/constants/category'
+
+const DRAFT_KEY = 'post-create-draft'
+const HISTORY_KEY = 'post-create-history'
+
 const form = reactive({
   title: '',
-  category: 'TECH',
+  category: categoryOptions[0]?.value || 'tech',
   content: '',
 })
 
 const tagValues = ref<string[]>([])
 const fileList = ref<any[]>([])
 const uploadingMap = ref<Record<string, boolean>>({})
+const historyList = ref<any[]>([])
 const submitting = ref(false)
 
 const beforeUpload = (file: File) => {
@@ -95,9 +113,7 @@ const dummyRequest = async (options: any) => {
   const { onSuccess, onError, file } = options
   try {
     uploadingMap.value[file.uid] = true
-    const form = new FormData()
-    form.append('file', file as File)
-    const res = await fileController.uploadUsingPost(form)
+    const res = await fileController.uploadUsingPost({ file: [file] } as any)
     if (res?.data?.code === 0 && res.data.data && res.data.data.length) {
       const url = res.data.data[0]
       const item = { uid: file.uid, name: file.name, status: 'done', url }
@@ -136,11 +152,11 @@ const handleSubmit = async () => {
   if (!validate()) return
   submitting.value = true
   try {
-    const images = fileList.value
+    const imagesArr = fileList.value
       .filter((f) => f.status === 'done' && f.url)
       .map((f) => f.url)
-      .join(',')
-    const tags = tagValues.value.join(',')
+    const images = JSON.stringify(imagesArr)
+    const tags = JSON.stringify(tagValues.value)
     const res = await postController.addPostUsingPost({
       title: form.title.trim(),
       content: form.content.trim(),
@@ -150,6 +166,8 @@ const handleSubmit = async () => {
     })
     if (res?.data?.code === 0 && res.data.data) {
       message.success('发布成功')
+      // 发布成功清理草稿
+      localStorage.removeItem(DRAFT_KEY)
       router.replace(`/post/${res.data.data}`)
     } else {
       message.error(res?.data?.message || '发布失败，请稍后重试')
@@ -162,6 +180,69 @@ const handleSubmit = async () => {
 }
 
 const goBack = () => router.back()
+
+// ========== 草稿与历史 ==========
+function saveDraft() {
+  const draft = { ...form, tags: [...tagValues.value], files: fileList.value.map(f => ({ name: f.name, url: f.url })) }
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
+}
+
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    if (!raw) return
+    const d = JSON.parse(raw)
+    form.title = d.title || ''
+    form.category = d.category || (categoryOptions[0]?.value || 'tech')
+    form.content = d.content || ''
+    tagValues.value = Array.isArray(d.tags) ? d.tags : []
+    fileList.value = Array.isArray(d.files) ? d.files.map((f: any, i: number) => ({ uid: String(i), name: f.name, status: 'done', url: f.url })) : []
+    message.success('已加载草稿')
+  } catch {}
+}
+
+function pushHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    const list: any[] = raw ? JSON.parse(raw) : []
+    list.unshift({
+      time: Date.now(),
+      title: form.title,
+      category: form.category,
+      content: form.content,
+      tags: [...tagValues.value],
+    })
+    // 只保留最近 10 条
+    const trimmed = list.slice(0, 10)
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(trimmed))
+    historyList.value = trimmed
+  } catch {}
+}
+
+function restoreHistory(item: any) {
+  if (!item) return
+  form.title = item.title || ''
+  form.category = item.category || (categoryOptions[0]?.value || 'tech')
+  form.content = item.content || ''
+  tagValues.value = Array.isArray(item.tags) ? item.tags : []
+}
+
+// 自动保存草稿（节流）
+let draftTimer: any
+function scheduleSaveDraft() {
+  clearTimeout(draftTimer)
+  draftTimer = setTimeout(saveDraft, 800)
+}
+
+watch(() => [form.title, form.category, form.content, tagValues.value], scheduleSaveDraft, { deep: true })
+
+onMounted(() => {
+  loadDraft()
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    historyList.value = raw ? JSON.parse(raw) : []
+  } catch { historyList.value = [] }
+})
 </script>
 
 <style scoped lang="scss">

@@ -27,7 +27,7 @@ import java.util.UUID;
  * 说明：当前为本地存储实现，生产建议接入对象存储（COS/OSS）
  */
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/file")
 @Slf4j
 public class FileController {
 

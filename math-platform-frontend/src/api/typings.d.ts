@@ -47,9 +47,21 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseListNotification_ = {
+    code?: number
+    data?: Notification[]
+    message?: string
+  }
+
   type BaseResponseListPost_ = {
     code?: number
     data?: Post[]
+    message?: string
+  }
+
+  type BaseResponseListString_ = {
+    code?: number
+    data?: string[]
     message?: string
   }
 
@@ -71,15 +83,21 @@ declare namespace API {
     message?: string
   }
 
-  type BaseResponsePost_ = {
+  type BaseResponsePostVO_ = {
     code?: number
-    data?: Post
+    data?: PostVO
     message?: string
   }
 
   type BaseResponseUser_ = {
     code?: number
     data?: User
+    message?: string
+  }
+
+  type BaseResponseUserPostStatsVO_ = {
+    code?: number
+    data?: UserPostStatsVO
     message?: string
   }
 
@@ -192,7 +210,17 @@ declare namespace API {
     id?: number
   }
 
+  type getUserPostStatsUsingGETParams = {
+    /** userId */
+    userId: number
+  }
+
   type getUserVOByIdUsingGETParams = {
+    /** id */
+    id?: number
+  }
+
+  type getUserVOPublicUsingGETParams = {
     /** id */
     id?: number
   }
@@ -241,6 +269,11 @@ declare namespace API {
     parentId: number
   }
 
+  type listUsingGETParams = {
+    /** limit */
+    limit?: number
+  }
+
   type LoginUserVO = {
     createTime?: string
     editTime?: string
@@ -251,6 +284,16 @@ declare namespace API {
     userName?: string
     userProfile?: string
     userRole?: string
+  }
+
+  type Notification = {
+    content?: string
+    createTime?: string
+    extra?: string
+    id?: number
+    readFlag?: number
+    receiverId?: number
+    type?: string
   }
 
   type PageRequest = {
@@ -416,6 +459,21 @@ declare namespace API {
   type UserLoginRequest = {
     userAccount?: string
     userPassword?: string
+  }
+
+  type UserPostQueryRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    userId?: number
+  }
+
+  type UserPostStatsVO = {
+    favouriteTotal?: number
+    likeTotal?: number
+    postCount?: number
+    viewTotal?: number
   }
 
   type UserQueryRequest = {

@@ -23,7 +23,7 @@ import java.util.List;
  * 首页推荐流接口
  */
 @RestController
-@RequestMapping("/api/feed")
+@RequestMapping("/feed")
 @Slf4j
 public class FeedController {
 

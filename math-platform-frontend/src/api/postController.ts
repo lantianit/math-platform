@@ -2,9 +2,9 @@
 /* eslint-disable */
 import request from '@/request'
 
-/** addPost POST /api/api/post/add */
+/** addPost POST /api/post/add */
 export async function addPostUsingPost(body: API.PostAddRequest, options?: { [key: string]: any }) {
-  return request<API.BaseResponseLong_>('/api/api/post/add', {
+  return request<API.BaseResponseLong_>('/api/post/add', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ export async function deletePostUsingPost(
   body: API.PostDeleteRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/post/delete', {
+  return request<API.BaseResponseBoolean_>('/api/post/delete', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export async function togglePostFavouriteUsingPost(
   body: API.PostFavouriteRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/post/favourite', {
+  return request<API.BaseResponseBoolean_>('/api/post/favourite', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export async function getPostByIdUsingGet(
   params: API.getPostByIdUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponsePost_>('/api/api/post/get', {
+  return request<API.BaseResponsePostVO_>('/api/post/get', {
     method: 'GET',
     params: {
       ...params,
@@ -65,7 +65,7 @@ export async function getHotPostsUsingGet(
   params: API.getHotPostsUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseListPost_>('/api/api/post/hot', {
+  return request<API.BaseResponseListPost_>('/api/post/hot', {
     method: 'GET',
     params: {
       // limit has a default value: 10
@@ -82,7 +82,7 @@ export async function getLatestPostsUsingGet(
   params: API.getLatestPostsUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseListPost_>('/api/api/post/latest', {
+  return request<API.BaseResponseListPost_>('/api/post/latest', {
     method: 'GET',
     params: {
       // limit has a default value: 10
@@ -98,7 +98,7 @@ export async function togglePostLikeUsingPost(
   body: API.PostLikeRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/post/like', {
+  return request<API.BaseResponseBoolean_>('/api/post/like', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export async function listPostsByPageUsingPost(
   body: API.PostQueryRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseIPagePost_>('/api/api/post/list/page', {
+  return request<API.BaseResponseIPagePost_>('/api/post/list/page', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -128,12 +128,42 @@ export async function updatePostUsingPost(
   body: API.PostUpdateRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseBoolean_>('/api/api/post/update', {
+  return request<API.BaseResponseBoolean_>('/api/post/update', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     data: body,
+    ...(options || {}),
+  })
+}
+
+/** listUserPostsByPage POST /api/post/user/list/page */
+export async function listUserPostsByPageUsingPost(
+  body: API.UserPostQueryRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseIPagePost_>('/api/post/user/list/page', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** getUserPostStats GET /api/post/user/stats */
+export async function getUserPostStatsUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getUserPostStatsUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseUserPostStatsVO_>('/api/post/user/stats', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
     ...(options || {}),
   })
 }

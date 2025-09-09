@@ -105,6 +105,21 @@ export async function userLogoutUsingPost(options?: { [key: string]: any }) {
   })
 }
 
+/** getUserVOPublic GET /api/user/public/get/vo */
+export async function getUserVoPublicUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getUserVOPublicUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseUserVO_>('/api/user/public/get/vo', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
 /** userRegister POST /api/user/register */
 export async function userRegisterUsingPost(
   body: API.UserRegisterRequest,
