@@ -12,6 +12,9 @@ import com.zh.mathplatform.infrastructure.exception.ErrorCode;
 import com.zh.mathplatform.infrastructure.exception.ThrowUtils;
 import com.zh.mathplatform.domain.user.entity.User;
 import com.zh.mathplatform.interfaces.dto.user.*;
+import com.zh.mathplatform.application.service.AvatarReviewService;
+import com.zh.mathplatform.domain.user.entity.UserAvatarReview;
+import com.zh.mathplatform.infrastructure.utils.UserHolder;
 import com.zh.mathplatform.interfaces.vo.user.LoginUserVO;
 import com.zh.mathplatform.interfaces.vo.user.UserVO;
 import com.zh.mathplatform.application.service.UserApplicationService;
@@ -33,6 +36,9 @@ public class UserController {
 
     @Resource
     private FilePictureUpload filePictureUpload;
+
+    @Resource
+    private AvatarReviewService avatarReviewService;
 
     /**
      * 用户注册
@@ -190,6 +196,31 @@ public class UserController {
     }
 
     /**
+     * 用户提交头像审核（从隔离区已上传完成后提交）
+     */
+    @PostMapping("/avatar/review/submit")
+    public BaseResponse<Long> submitAvatarReview(@RequestBody AvatarReviewSubmitRequest req, HttpServletRequest request) {
+        if (req == null || req.getObjectKey() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long userId = UserHolder.getLoginUserIdRequired(request);
+        UserAvatarReview r = new UserAvatarReview();
+        r.setUserId(userId);
+        r.setObjectKey(req.getObjectKey());
+        r.setUrl(req.getUrl());
+        r.setThumbnailKey(req.getThumbnailKey());
+        r.setThumbnailUrl(req.getThumbnailUrl());
+        r.setEtag(req.getEtag());
+        r.setSha256(req.getSha256());
+        r.setWidth(req.getWidth());
+        r.setHeight(req.getHeight());
+        r.setFormat(req.getFormat());
+        r.setSize(req.getSize());
+        Long id = avatarReviewService.submit(r);
+        return ResultUtils.success(id);
+    }
+
+    /**
      * 分页获取用户封装列表（仅管理员）
      *
      * @param userQueryRequest 查询请求参数
@@ -199,5 +230,41 @@ public class UserController {
     public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest) {
         ThrowUtils.throwIf(userQueryRequest == null, ErrorCode.PARAMS_ERROR);
         return ResultUtils.success(userApplicationService.listUserVOByPage(userQueryRequest));
+    }
+
+    /**
+     * 管理员分页查看头像审核任务
+     */
+    @GetMapping("/admin/avatar/review/list")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.zh.mathplatform.domain.user.entity.UserAvatarReview>> listAvatarReviews(
+            Integer status, Integer current, Integer pageSize) {
+        int c = current == null ? 1 : current;
+        int s = pageSize == null ? 10 : pageSize;
+        return ResultUtils.success(avatarReviewService.page(status, c, s));
+    }
+
+    /**
+     * 管理员审批通过
+     */
+    @PostMapping("/admin/avatar/review/{id}/approve")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> approveAvatar(@PathVariable Long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id == null || id <= 0, ErrorCode.PARAMS_ERROR, "审核记录ID无效");
+        Long reviewerId = UserHolder.getLoginUserIdRequired(request);
+        avatarReviewService.approve(id, reviewerId);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 管理员审批驳回
+     */
+    @PostMapping("/admin/avatar/review/{id}/reject")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> rejectAvatar(@PathVariable Long id, @RequestParam(required = false) String reason, HttpServletRequest request) {
+        ThrowUtils.throwIf(id == null || id <= 0, ErrorCode.PARAMS_ERROR, "审核记录ID无效");
+        Long reviewerId = UserHolder.getLoginUserIdRequired(request);
+        avatarReviewService.reject(id, reviewerId, reason);
+        return ResultUtils.success(true);
     }
 }

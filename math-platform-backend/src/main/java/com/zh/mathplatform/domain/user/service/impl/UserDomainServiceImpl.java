@@ -8,9 +8,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zh.mathplatform.domain.user.constant.UserConstant;
 import com.zh.mathplatform.domain.user.entity.User;
+import com.zh.mathplatform.domain.user.valueobject.UserRoleEnum;
 import com.zh.mathplatform.domain.user.repository.UserRepository;
 import com.zh.mathplatform.domain.user.service.UserDomainService;
-import com.zh.mathplatform.domain.user.valueobject.UserRoleEnum;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
 import com.zh.mathplatform.interfaces.dto.user.UserQueryRequest;
@@ -49,7 +49,7 @@ public class UserDomainServiceImpl implements UserDomainService {
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 2. 检查用户账号是否和数据库中已有的重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("user_account", userAccount);
         long count = userRepository.getBaseMapper().selectCount(queryWrapper);
         if (count > 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
@@ -61,7 +61,7 @@ public class UserDomainServiceImpl implements UserDomainService {
         user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
         user.setUserName("无名");
-        user.setUserRole(UserRoleEnum.USER.getValue());
+        user.setUserRole(UserRoleEnum.USER.getValue()); // 默认为普通用户
         boolean saveResult = userRepository.save(user);
         if (!saveResult) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
@@ -78,18 +78,19 @@ public class UserDomainServiceImpl implements UserDomainService {
         // 仅选择稳定存在的列，避免因缺失扩展字段导致的查询失败
         queryWrapper.select(
                 "id",
-                "userAccount",
-                "userName",
-                "userAvatar",
-                "userProfile",
-                "userRole",
-                "editTime",
-                "createTime",
-                "updateTime",
-                "isDelete"
+                "user_account",
+                "user_name",
+                "user_avatar",
+                "user_profile",
+                "user_role",
+                "status",
+                "edit_time",
+                "create_time",
+                "update_time",
+                "is_delete"
         );
-        queryWrapper.eq("userAccount", userAccount);
-        queryWrapper.eq("userPassword", encryptPassword);
+        queryWrapper.eq("user_account", userAccount);
+        queryWrapper.eq("user_password", encryptPassword);
         User user = userRepository.getBaseMapper().selectOne(queryWrapper);
         // 不存在，抛异常
         if (user == null) {
@@ -127,15 +128,16 @@ public class UserDomainServiceImpl implements UserDomainService {
         QueryWrapper<User> selectByIdWrapper = new QueryWrapper<>();
         selectByIdWrapper.select(
                 "id",
-                "userAccount",
-                "userName",
-                "userAvatar",
-                "userProfile",
-                "userRole",
-                "editTime",
-                "createTime",
-                "updateTime",
-                "isDelete"
+                "user_account",
+                "user_name",
+                "user_avatar",
+                "user_profile",
+                "user_role",
+                "status",
+                "edit_time",
+                "create_time",
+                "update_time",
+                "is_delete"
         ).eq("id", userId);
         currentUser = userRepository.getBaseMapper().selectOne(selectByIdWrapper);
         if (currentUser == null) {
@@ -218,11 +220,13 @@ public class UserDomainServiceImpl implements UserDomainService {
         String sortOrder = userQueryRequest.getSortOrder();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(ObjUtil.isNotNull(id), "id", id);
-        queryWrapper.eq(StrUtil.isNotBlank(userRole), "userRole", userRole);
-        queryWrapper.like(StrUtil.isNotBlank(userAccount), "userAccount", userAccount);
-        queryWrapper.like(StrUtil.isNotBlank(userName), "userName", userName);
-        queryWrapper.like(StrUtil.isNotBlank(userProfile), "userProfile", userProfile);
-        queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), sortOrder.equals("ascend"), sortField);
+        queryWrapper.eq(StrUtil.isNotBlank(userRole), "user_role", userRole);
+        queryWrapper.like(StrUtil.isNotBlank(userAccount), "user_account", userAccount);
+        queryWrapper.like(StrUtil.isNotBlank(userName), "user_name", userName);
+        queryWrapper.like(StrUtil.isNotBlank(userProfile), "user_profile", userProfile);
+        // 将驼峰命名转换为下划线命名
+        String dbSortField = convertCamelToUnderscore(sortField);
+        queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), sortOrder.equals("ascend"), dbSortField);
         return queryWrapper;
     }
 
@@ -254,6 +258,51 @@ public class UserDomainServiceImpl implements UserDomainService {
     @Override
     public boolean saveUser(User userEntity) {
         return userRepository.save(userEntity);
+    }
+
+    /**
+     * 将驼峰命名转换为下划线命名
+     *
+     * @param camelCase 驼峰命名字符串
+     * @return 下划线命名字符串
+     */
+    private String convertCamelToUnderscore(String camelCase) {
+        if (StrUtil.isBlank(camelCase)) {
+            return camelCase;
+        }
+        
+        // 常见字段映射表，处理特殊情况
+        switch (camelCase) {
+            case "createTime":
+                return "create_time";
+            case "updateTime":
+                return "update_time";
+            case "editTime":
+                return "edit_time";
+            case "userAccount":
+                return "user_account";
+            case "userName":
+                return "user_name";
+            case "userAvatar":
+                return "user_avatar";
+            case "userProfile":
+                return "user_profile";
+            case "userRole":
+                return "user_role";
+            case "lastLoginTime":
+                return "last_login_time";
+            case "lastLoginIp":
+                return "last_login_ip";
+            case "postCount":
+                return "post_count";
+            case "likeCount":
+                return "like_count";
+            case "isDelete":
+                return "is_delete";
+            default:
+                // 使用正则表达式将驼峰转换为下划线
+                return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
+        }
     }
 }
 

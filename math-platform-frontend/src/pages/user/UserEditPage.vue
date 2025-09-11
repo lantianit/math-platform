@@ -80,14 +80,31 @@ const customUpload = async (options: any) => {
     // 先放入占位项，展示上传中
     fileList.value = [{ uid: file.uid, name: file.name, status: 'uploading', percent: 30 }]
     if (onProgress) onProgress({ percent: 30 })
-    const res = await fileController.uploadToCosUsingPost({}, file as File)
+    const res = await fileController.uploadAvatarPendingUsingPost({}, file as File)
     if (res?.data?.code === 0 && res.data.data) {
-      const url = res.data.data.url || res.data.data.thumbnailUrl
+      const data = res.data.data
+      const url = data.url || data.thumbnailUrl
       if (!url) throw new Error('no url')
-      form.userAvatar = url
+      // 不直接更新用户头像，提交审核
+      const submit = await userController.submitAvatarReviewUsingPost({
+        objectKey: data.objectKey,
+        url: data.url,
+        thumbnailKey: data.thumbnailKey,
+        thumbnailUrl: data.thumbnailUrl,
+        etag: data.etag,
+        sha256: data.sha256,
+        width: data.picWidth,
+        height: data.picHeight,
+        format: data.picFormat,
+        size: data.picSize,
+      } as any)
+      if (submit?.data?.code !== 0) {
+        throw new Error(submit?.data?.message || 'submit failed')
+      }
       fileList.value = [{ uid: file.uid, name: file.name, status: 'done', url, percent: 100 }]
       if (onProgress) onProgress({ percent: 100 })
       onSuccess({ url }, file)
+      message.success('头像已提交，等待管理员审核')
     } else {
       message.error(res?.data?.message || '上传失败')
       onError(new Error(res?.data?.message || 'upload failed'))
@@ -124,7 +141,6 @@ const save = async () => {
     const res = await userController.updateProfileUsingPost({
       userName: form.userName.trim(),
       userProfile: form.userProfile.trim(),
-      userAvatar: form.userAvatar,
     } as any)
     if (res?.data?.code === 0) {
       message.success('保存成功')

@@ -1,4 +1,22 @@
 declare namespace API {
+  type approveAvatarUsingPOSTParams = {
+    /** id */
+    id: number
+  }
+
+  type AvatarReviewSubmitRequest = {
+    etag?: string
+    format?: string
+    height?: number
+    objectKey?: string
+    sha256?: string
+    size?: number
+    thumbnailKey?: string
+    thumbnailUrl?: string
+    url?: string
+    width?: number
+  }
+
   type BaseResponseArrayString_ = {
     code?: number
     data?: string[]
@@ -74,6 +92,12 @@ declare namespace API {
   type BaseResponseLong_ = {
     code?: number
     data?: number
+    message?: string
+  }
+
+  type BaseResponsePageUserAvatarReview_ = {
+    code?: number
+    data?: PageUserAvatarReview_
     message?: string
   }
 
@@ -276,6 +300,15 @@ declare namespace API {
     followingId: number
   }
 
+  type listAvatarReviewsUsingGETParams = {
+    /** current */
+    current?: number
+    /** pageSize */
+    pageSize?: number
+    /** status */
+    status?: number
+  }
+
   type listRepliesByParentIdUsingGETParams = {
     /** parentId */
     parentId: number
@@ -313,6 +346,14 @@ declare namespace API {
     pageSize?: number
     sortField?: string
     sortOrder?: string
+  }
+
+  type PageUserAvatarReview_ = {
+    current?: number
+    pages?: number
+    records?: UserAvatarReview[]
+    size?: number
+    total?: number
   }
 
   type PageUserVO_ = {
@@ -419,6 +460,13 @@ declare namespace API {
     viewCount?: number
   }
 
+  type rejectAvatarUsingPOSTParams = {
+    /** id */
+    id: number
+    /** reason */
+    reason?: string
+  }
+
   type SearchRequest = {
     category?: string
     current?: number
@@ -429,6 +477,8 @@ declare namespace API {
   }
 
   type UploadPictureResult = {
+    etag?: string
+    objectKey?: string
     picColor?: string
     picFormat?: string
     picHeight?: number
@@ -436,6 +486,8 @@ declare namespace API {
     picScale?: number
     picSize?: number
     picWidth?: number
+    sha256?: string
+    thumbnailKey?: string
     thumbnailUrl?: string
     url?: string
   }
@@ -461,6 +513,7 @@ declare namespace API {
     updateTime?: string
     userAccount?: string
     userAvatar?: string
+    userAvatarVersion?: number
     userName?: string
     userPassword?: string
     userProfile?: string
@@ -474,6 +527,32 @@ declare namespace API {
     userName?: string
     userProfile?: string
     userRole?: string
+  }
+
+  type UserAvatarReview = {
+    autoReviewedAt?: string
+    bucket?: string
+    etag?: string
+    format?: string
+    height?: number
+    id?: number
+    lastError?: string
+    machineScore?: number
+    objectKey?: string
+    publishedAt?: string
+    reason?: string
+    reviewedAt?: string
+    reviewerId?: number
+    riskLabels?: string
+    sha256?: string
+    size?: number
+    status?: number
+    submittedAt?: string
+    thumbnailKey?: string
+    thumbnailUrl?: string
+    url?: string
+    userId?: number
+    width?: number
   }
 
   type UserFollowRequest = {
