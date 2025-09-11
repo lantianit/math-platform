@@ -4,6 +4,8 @@ import cn.hutool.core.io.FileUtil;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.GetObjectRequest;
+import com.qcloud.cos.model.CopyObjectRequest;
+import com.qcloud.cos.model.CopyObjectResult;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.PicOperations;
@@ -60,6 +62,12 @@ public class CosManager {
 
     public void deleteObject(String key) {
         cosClient.deleteObject(cosClientConfig.getBucket(), key);
+    }
+
+    public CopyObjectResult copyObject(String sourceKey, String targetKey) {
+        String bucket = cosClientConfig.getBucket();
+        CopyObjectRequest request = new CopyObjectRequest(bucket, sourceKey, bucket, targetKey);
+        return cosClient.copyObject(request);
     }
 }
 

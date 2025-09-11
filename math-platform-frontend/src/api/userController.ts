@@ -14,6 +14,66 @@ export async function addUserUsingPost(body: API.UserAddRequest, options?: { [ke
   })
 }
 
+/** approveAvatar POST /api/user/admin/avatar/review/${param0}/approve */
+export async function approveAvatarUsingPost(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.approveAvatarUsingPOSTParams,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, ...queryParams } = params
+  return request<API.BaseResponseBoolean_>(`/api/user/admin/avatar/review/${param0}/approve`, {
+    method: 'POST',
+    params: { ...queryParams },
+    ...(options || {}),
+  })
+}
+
+/** rejectAvatar POST /api/user/admin/avatar/review/${param0}/reject */
+export async function rejectAvatarUsingPost(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.rejectAvatarUsingPOSTParams,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, ...queryParams } = params
+  return request<API.BaseResponseBoolean_>(`/api/user/admin/avatar/review/${param0}/reject`, {
+    method: 'POST',
+    params: {
+      ...queryParams,
+    },
+    ...(options || {}),
+  })
+}
+
+/** listAvatarReviews GET /api/user/admin/avatar/review/list */
+export async function listAvatarReviewsUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.listAvatarReviewsUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePageUserAvatarReview_>('/api/user/admin/avatar/review/list', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
+/** submitAvatarReview POST /api/user/avatar/review/submit */
+export async function submitAvatarReviewUsingPost(
+  body: API.AvatarReviewSubmitRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseLong_>('/api/user/avatar/review/submit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** uploadAvatar POST /api/user/avatar/upload */
 export async function uploadAvatarUsingPost(
   body: {},

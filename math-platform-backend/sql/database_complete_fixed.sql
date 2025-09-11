@@ -1,3 +1,31 @@
+-- 用户头像审核表
+CREATE TABLE IF NOT EXISTS `user_avatar_review` (
+  `id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `bucket` VARCHAR(128) NOT NULL,
+  `object_key` VARCHAR(512) NOT NULL,
+  `url` VARCHAR(1024) NULL,
+  `thumbnail_key` VARCHAR(512) NULL,
+  `thumbnail_url` VARCHAR(1024) NULL,
+  `etag` VARCHAR(128) NULL,
+  `sha256` VARCHAR(128) NULL,
+  `width` INT NULL,
+  `height` INT NULL,
+  `format` VARCHAR(32) NULL,
+  `size` BIGINT NULL,
+  `status` INT NOT NULL,
+  `risk_labels` JSON NULL,
+  `machine_score` DOUBLE NULL,
+  `reason` VARCHAR(512) NULL,
+  `reviewer_id` BIGINT NULL,
+  `submitted_at` DATETIME NULL,
+  `auto_reviewed_at` DATETIME NULL,
+  `reviewed_at` DATETIME NULL,
+  `published_at` DATETIME NULL,
+  `last_error` VARCHAR(512) NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_status` (`user_id`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ========================================
 -- Math Platform 企业级论坛数据库完整初始化脚本 (修复版)
 -- 版本: v1.1 (修复版)

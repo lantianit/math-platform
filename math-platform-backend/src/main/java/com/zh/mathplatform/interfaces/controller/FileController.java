@@ -90,6 +90,16 @@ public class FileController {
         return ResultUtils.success(result);
     }
 
+    // 头像待审上传：进入隔离路径 avatar/quarantine
+    @PostMapping(value = "/upload/avatar/pending", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<UploadPictureResult> uploadAvatarPending(@RequestPart("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "未选择文件");
+        }
+        var result = filePictureUpload.uploadPicture(file, "avatar/quarantine");
+        return ResultUtils.success(result);
+    }
+
     private void ensureUploadDir() {
         try {
             Path dir = Paths.get(UPLOAD_DIR);

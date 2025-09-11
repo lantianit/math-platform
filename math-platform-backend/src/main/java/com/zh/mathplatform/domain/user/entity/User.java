@@ -46,6 +46,11 @@ public class User implements Serializable {
      * 用户头像
      */
     private String userAvatar;
+    /**
+     * 头像版本号（用于发布与缓存一致性）
+     */
+    @TableField(exist = false)
+    private Long userAvatarVersion;
 
     /**
      * 用户简介
@@ -60,6 +65,7 @@ public class User implements Serializable {
     /**
      * 性别：0-未知 1-男 2-女
      */
+    @TableField(exist = false)
     private Integer gender;
 
     /**
@@ -99,6 +105,7 @@ public class User implements Serializable {
     /**
      * 粉丝数
      */
+    @TableField(exist = false)
     private Integer followerCount;
 
     /**
