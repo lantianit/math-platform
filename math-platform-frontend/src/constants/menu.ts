@@ -31,6 +31,14 @@ export const menuConfig: MenuItem[] = [
     component: () => import('@/pages/admin/UserManagePage.vue'),
     requireAdmin: true,
   }
+  ,
+  {
+    key: '/admin/avatarReview',
+    label: '头像审核',
+    title: '头像审核',
+    component: () => import('@/pages/admin/AvatarReviewPage.vue'),
+    requireAdmin: true,
+  }
 ]
 
 // 根据用户权限过滤菜单项

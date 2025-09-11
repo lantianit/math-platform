@@ -48,9 +48,13 @@ public abstract class PictureUploadTemplate {
             if (CollUtil.isNotEmpty(objectList)) {
                 CIObject compressedCiObject = objectList.get(0);
                 CIObject thumbnailCiObject = objectList.size() > 1 ? objectList.get(1) : compressedCiObject;
-                return buildResult(originalFilename, compressedCiObject, thumbnailCiObject, imageInfo);
+                UploadPictureResult r = buildResult(originalFilename, compressedCiObject, thumbnailCiObject, imageInfo);
+                r.setEtag(putObjectResult.getETag());
+                return r;
             }
-            return buildResult(originalFilename, file, uploadPath, imageInfo);
+            UploadPictureResult r = buildResult(originalFilename, file, uploadPath, imageInfo);
+            r.setEtag(putObjectResult.getETag());
+            return r;
         } catch (Exception e) {
             log.error("图片上传到对象存储失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
@@ -72,6 +76,7 @@ public abstract class PictureUploadTemplate {
         double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
         UploadPictureResult uploadPictureResult = new UploadPictureResult();
         uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + compressedCiObject.getKey());
+        uploadPictureResult.setObjectKey(compressedCiObject.getKey());
         uploadPictureResult.setPicName(FileUtil.mainName(originalFilename));
         uploadPictureResult.setPicSize(compressedCiObject.getSize().longValue());
         uploadPictureResult.setPicWidth(picWidth);
@@ -80,6 +85,7 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicFormat(compressedCiObject.getFormat());
         uploadPictureResult.setPicColor(imageInfo.getAve());
         uploadPictureResult.setThumbnailUrl(cosClientConfig.getHost() + "/" + thumbnailCiObject.getKey());
+        uploadPictureResult.setThumbnailKey(thumbnailCiObject.getKey());
         return uploadPictureResult;
     }
 
@@ -89,6 +95,7 @@ public abstract class PictureUploadTemplate {
         double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
         UploadPictureResult uploadPictureResult = new UploadPictureResult();
         uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
+        uploadPictureResult.setObjectKey(uploadPath);
         uploadPictureResult.setPicName(FileUtil.mainName(originalFilename));
         uploadPictureResult.setPicSize(FileUtil.size(file));
         uploadPictureResult.setPicWidth(picWidth);

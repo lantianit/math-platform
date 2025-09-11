@@ -50,6 +50,58 @@ export async function uploadAvatarUsingPost(
   })
 }
 
+/** submitAvatarReview POST /api/user/avatar/review/submit */
+export async function submitAvatarReviewUsingPost(
+  body: API.AvatarReviewSubmitRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseLong_>('/api/user/avatar/review/submit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** listAvatarReviews GET /api/user/admin/avatar/review/list */
+export async function listAvatarReviewsUsingGet(
+  params: { status?: number; current?: number; pageSize?: number },
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePageUserAvatarReview_>('/api/user/admin/avatar/review/list', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
+/** approveAvatar POST /api/user/admin/avatar/review/{id}/approve */
+export async function approveAvatarUsingPost(id: number, options?: { [key: string]: any }) {
+  return request<API.BaseResponseBoolean_>(`/api/user/admin/avatar/review/${id}/approve`, {
+    method: 'POST',
+    ...(options || {}),
+  })
+}
+
+/** rejectAvatar POST /api/user/admin/avatar/review/{id}/reject */
+export async function rejectAvatarUsingPost(
+  id: number,
+  params?: { reason?: string },
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>(`/api/user/admin/avatar/review/${id}/reject`, {
+    method: 'POST',
+    params: {
+      ...(params || {}),
+    },
+    ...(options || {}),
+  })
+}
+
 /** deleteUser POST /api/user/delete */
 export async function deleteUserUsingPost(
   body: API.DeleteRequest,

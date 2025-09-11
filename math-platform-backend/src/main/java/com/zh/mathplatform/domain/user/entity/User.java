@@ -46,6 +46,11 @@ public class User implements Serializable {
      * 用户头像
      */
     private String userAvatar;
+    /**
+     * 头像版本号（用于发布与缓存一致性）
+     */
+    @TableField(exist = false)
+    private Long userAvatarVersion;
 
     /**
      * 用户简介
