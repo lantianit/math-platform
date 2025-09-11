@@ -108,11 +108,11 @@
         </dependency>
         
         <!-- 对象存储：腾讯云COS -->
-<!--        <dependency>-->
-<!--            <groupId>com.qcloud</groupId>-->
-<!--            <artifactId>cos_api</artifactId>-->
-<!--            <version>5.6.227</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>5.6.227</version>
+        </dependency>
         
         <!-- 工具库：hutool -->
         <dependency>

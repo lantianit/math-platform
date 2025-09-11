@@ -15,7 +15,11 @@ import com.zh.mathplatform.interfaces.dto.user.*;
 import com.zh.mathplatform.interfaces.vo.user.LoginUserVO;
 import com.zh.mathplatform.interfaces.vo.user.UserVO;
 import com.zh.mathplatform.application.service.UserApplicationService;
+import com.zh.mathplatform.infrastructure.manager.upload.FilePictureUpload;
+import com.zh.mathplatform.infrastructure.manager.upload.model.dto.file.UploadPictureResult;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +30,9 @@ public class UserController {
 
     @Resource
     private UserApplicationService userApplicationService;
+
+    @Resource
+    private FilePictureUpload filePictureUpload;
 
     /**
      * 用户注册
@@ -156,6 +163,30 @@ public class UserController {
         User userEntity = UserAssembler.toUserEntity(userUpdateRequest);
         userApplicationService.updateUser(userEntity);
         return ResultUtils.success(true);
+    }
+
+    /**
+     * 上传并更新当前登录用户头像（COS 存储）
+     */
+    @PostMapping(value = "/avatar/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<String> uploadAvatar(@RequestPart("file") MultipartFile file, HttpServletRequest request) {
+        if (file == null || file.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "未选择文件");
+        }
+        // 获取当前登录用户
+        User loginUser = userApplicationService.getLoginUser(request);
+        if (loginUser == null || loginUser.getId() == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        // 上传到 COS，使用 avatar 作为路径前缀
+        UploadPictureResult uploadResult = filePictureUpload.uploadPicture(file, "avatar");
+        String avatarUrl = uploadResult.getUrl() != null ? uploadResult.getUrl() : uploadResult.getThumbnailUrl();
+        // 持久化用户头像
+        User toUpdate = new User();
+        toUpdate.setId(loginUser.getId());
+        toUpdate.setUserAvatar(avatarUrl);
+        userApplicationService.updateUser(toUpdate);
+        return ResultUtils.success(avatarUrl);
     }
 
     /**

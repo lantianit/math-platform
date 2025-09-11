@@ -103,12 +103,9 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: false
-#
-## 腾讯云COS配置
-#cos:
-#  client:
-#    # 配置项待添加
-#
+
+## 腾讯云COS配置 配置在dev的配置文件中，不能上传到git仓库
+
 ## 阿里云AI配置
 #aliYunAi:
 #  # 配置项待添加

@@ -89,6 +89,18 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseString_ = {
+    code?: number
+    data?: string
+    message?: string
+  }
+
+  type BaseResponseUploadPictureResult_ = {
+    code?: number
+    data?: UploadPictureResult
+    message?: string
+  }
+
   type BaseResponseUser_ = {
     code?: number
     data?: User
@@ -414,6 +426,18 @@ declare namespace API {
     pageSize?: number
     sortField?: string
     sortOrder?: string
+  }
+
+  type UploadPictureResult = {
+    picColor?: string
+    picFormat?: string
+    picHeight?: number
+    picName?: string
+    picScale?: number
+    picSize?: number
+    picWidth?: number
+    thumbnailUrl?: string
+    url?: string
   }
 
   type User = {

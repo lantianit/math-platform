@@ -4,6 +4,9 @@ import com.zh.mathplatform.infrastructure.common.BaseResponse;
 import com.zh.mathplatform.infrastructure.common.ResultUtils;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
+import com.zh.mathplatform.infrastructure.manager.upload.FilePictureUpload;
+import com.zh.mathplatform.infrastructure.manager.upload.model.dto.file.UploadPictureResult;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
@@ -29,6 +32,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/file")
 @Slf4j
+@RequiredArgsConstructor
 public class FileController {
 
     private static final String UPLOAD_DIR = "uploads";
@@ -71,6 +75,19 @@ public class FileController {
         }
 
         return ResultUtils.success(urls);
+    }
+
+    // ========== COS 上传（返回富信息） ==========
+    private final FilePictureUpload filePictureUpload;
+
+    @PostMapping(value = "/upload/cos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<UploadPictureResult> uploadToCos(
+            @RequestPart("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "未选择文件");
+        }
+        var result = filePictureUpload.uploadPicture(file, "uploads");
+        return ResultUtils.success(result);
     }
 
     private void ensureUploadDir() {

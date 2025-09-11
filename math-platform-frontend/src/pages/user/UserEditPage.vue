@@ -10,6 +10,7 @@
             :before-upload="beforeUpload"
             :custom-request="customUpload"
             @remove="onRemove"
+            accept="image/*"
           >
             <div>
               <PlusOutlined />
@@ -69,24 +70,30 @@ const beforeUpload = (file: File) => {
     message.error('图片大小需小于 3MB')
     return Upload.LIST_IGNORE
   }
-  return false
+  // 通过校验，交给 customRequest 处理
+  return true
 }
 
 const customUpload = async (options: any) => {
-  const { onSuccess, onError, file } = options
+  const { onSuccess, onError, onProgress, file } = options
   try {
-    const formData = new FormData()
-    formData.append('file', file as File)
-    const res = await fileController.uploadUsingPost(formData)
-    if (res?.data?.code === 0 && res.data.data && res.data.data.length) {
-      const url = res.data.data[0]
+    // 先放入占位项，展示上传中
+    fileList.value = [{ uid: file.uid, name: file.name, status: 'uploading', percent: 30 }]
+    if (onProgress) onProgress({ percent: 30 })
+    const res = await fileController.uploadToCosUsingPost({}, file as File)
+    if (res?.data?.code === 0 && res.data.data) {
+      const url = res.data.data.url || res.data.data.thumbnailUrl
+      if (!url) throw new Error('no url')
       form.userAvatar = url
-      fileList.value = [{ uid: file.uid, name: file.name, status: 'done', url }]
-      onSuccess({}, file)
+      fileList.value = [{ uid: file.uid, name: file.name, status: 'done', url, percent: 100 }]
+      if (onProgress) onProgress({ percent: 100 })
+      onSuccess({ url }, file)
     } else {
-      onError(new Error('upload failed'))
+      message.error(res?.data?.message || '上传失败')
+      onError(new Error(res?.data?.message || 'upload failed'))
     }
   } catch (e) {
+    message.error('上传失败')
     onError(e)
   }
 }
