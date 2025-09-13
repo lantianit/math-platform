@@ -6,7 +6,6 @@ import com.zh.mathplatform.application.service.AvatarReviewService;
 import com.zh.mathplatform.application.service.NotifyService;
 import com.zh.mathplatform.domain.notify.entity.Notification;
 import com.zh.mathplatform.domain.user.entity.User;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zh.mathplatform.domain.user.entity.UserAvatarReview;
 import com.zh.mathplatform.domain.user.valueobject.AvatarReviewStatusEnum;
 import com.zh.mathplatform.infrastructure.api.CosManager;

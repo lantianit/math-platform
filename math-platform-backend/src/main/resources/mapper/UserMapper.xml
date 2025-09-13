@@ -5,27 +5,33 @@
 <mapper namespace="com.zh.mathplatform.infrastructure.mapper.UserMapper">
 
     <resultMap id="BaseResultMap" type="com.zh.mathplatform.domain.user.entity.User">
-        <id property="id" column="id" />
-        <result property="userAccount" column="userAccount" />
-        <result property="userPassword" column="userPassword" />
-        <result property="userName" column="userName" />
-        <result property="userAvatar" column="userAvatar" />
-        <result property="userProfile" column="userProfile" />
-        <result property="userRole" column="userRole" />
-        <result property="email" column="email" />
-        <result property="phone" column="phone" />
-        <result property="postCount" column="postCount" />
-        <result property="likeCount" column="likeCount" />
-        <result property="status" column="status" />
-        <result property="lastLoginTime" column="lastLoginTime" />
-        <result property="lastLoginIp" column="lastLoginIp" />
-        <result property="editTime" column="editTime" />
-        <result property="createTime" column="createTime" />
-        <result property="updateTime" column="updateTime" />
-        <result property="isDelete" column="isDelete" />
+            <id property="id" column="id" />
+            <result property="userAccount" column="userAccount" />
+            <result property="userPassword" column="userPassword" />
+            <result property="userName" column="userName" />
+            <result property="userAvatar" column="userAvatar" />
+            <result property="userProfile" column="userProfile" />
+            <result property="userRole" column="userRole" />
+            <result property="gender" column="gender" />
+            <result property="email" column="email" />
+            <result property="phone" column="phone" />
+            <result property="birthday" column="birthday" />
+            <result property="location" column="location" />
+            <result property="website" column="website" />
+            <result property="followingCount" column="followingCount" />
+            <result property="followerCount" column="followerCount" />
+            <result property="postCount" column="postCount" />
+            <result property="likeCount" column="likeCount" />
+            <result property="status" column="status" />
+            <result property="lastLoginTime" column="lastLoginTime" />
+            <result property="lastLoginIp" column="lastLoginIp" />
+            <result property="editTime" column="editTime" />
+            <result property="createTime" column="createTime" />
+            <result property="updateTime" column="updateTime" />
+            <result property="isDelete" column="isDelete" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,userAccount,userPassword,userName,userAvatar,userProfile,userRole,email,phone,postCount,likeCount,status,lastLoginTime,lastLoginIp,editTime,createTime,updateTime,isDelete
+        id,userAccount,userPassword,userName,userAvatar,userProfile,userRole,gender,email,phone,birthday,location,website,followingCount,followerCount,postCount,likeCount,status,lastLoginTime,lastLoginIp,editTime,createTime,updateTime,isDelete
     </sql>
 </mapper>
