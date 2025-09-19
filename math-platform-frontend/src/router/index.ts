@@ -57,6 +57,32 @@ const router = createRouter({
       name: '通知中心',
       component: () => import('@/pages/NotificationsPage.vue'),
     },
+    // 壁纸相关路由
+    {
+      path: '/wallpaper',
+      name: '学习加油壁纸',
+      component: () => import('@/pages/WallpaperPageNatural.vue'),
+    },
+    {
+      path: '/wallpaper/enterprise',
+      name: '壁纸页面(企业版)',
+      component: () => import('@/pages/WallpaperPageEnterprise.vue'),
+    },
+    {
+      path: '/wallpaper/legacy',
+      name: '壁纸页面(旧版)',
+      component: () => import('@/pages/WallpaperPage.vue'),
+    },
+    {
+      path: '/admin/wallpaper',
+      name: '壁纸管理',
+      component: () => import('@/pages/admin/WallpaperManagePage.vue'),
+    },
+    {
+      path: '/admin/wallpaper/batch-crawl',
+      name: '批量抓取壁纸',
+      component: () => import('@/pages/admin/WallpaperBatchCrawlPage.vue'),
+    },
   ],
 })
 

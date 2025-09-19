@@ -7,6 +7,7 @@ import com.zh.mathplatform.domain.post.entity.Post;
 import com.zh.mathplatform.infrastructure.common.BaseResponse;
 import com.zh.mathplatform.infrastructure.common.ResultUtils;
 import com.zh.mathplatform.infrastructure.utils.PostVOConverter;
+import com.zh.mathplatform.interfaces.constant.SearchRedisKeys;
 import com.zh.mathplatform.interfaces.vo.post.PostVO;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,8 @@ public class SearchController {
     @Autowired(required = false)
     private StringRedisTemplate stringRedisTemplate;
 
-    private static final String HOT_KEYWORDS_ZSET = "search:hot:keywords";
+    @Autowired
+    private SearchRedisKeys searchRedisKeys;
 
     /**
      * 搜索帖子
@@ -101,8 +103,11 @@ public class SearchController {
             return;
         }
         try {
-            stringRedisTemplate.opsForZSet().incrementScore(HOT_KEYWORDS_ZSET, keyword.trim(), 1.0);
-        } catch (Exception ignored) {}
+            stringRedisTemplate.opsForZSet().incrementScore(searchRedisKeys.getHotKeywords(), keyword.trim(), 1.0);
+            log.debug("记录热词成功: {}", keyword);
+        } catch (Exception e) {
+            log.warn("记录热词失败: {}, 错误: {}", keyword, e.getMessage());
+        }
     }
 
     /**
@@ -114,7 +119,7 @@ public class SearchController {
         }
         try {
             ZSetOperations<String, String> zOps = stringRedisTemplate.opsForZSet();
-            var tuples = zOps.reverseRangeWithScores(HOT_KEYWORDS_ZSET, 0, Math.max(0, limit - 1));
+            var tuples = zOps.reverseRangeWithScores(searchRedisKeys.getHotKeywords(), 0, Math.max(0, limit - 1));
             if (tuples == null || tuples.isEmpty()) {
                 return new String[0];
             }
@@ -133,7 +138,7 @@ public class SearchController {
         }
         try {
             ZSetOperations<String, String> zOps = stringRedisTemplate.opsForZSet();
-            var top = zOps.reverseRange(HOT_KEYWORDS_ZSET, 0, 200);
+            var top = zOps.reverseRange(searchRedisKeys.getHotKeywords(), 0, 200);
             if (top == null) {
                 return new String[0];
             }

@@ -17,6 +17,15 @@
               <div style="margin-top: 8px">上传</div>
             </div>
           </a-upload>
+          <div style="margin-top: 8px">
+            <a-input-search
+              v-model:value="avatarUrl"
+              placeholder="或输入图片URL（http/https）并上传"
+              enter-button="通过URL上传"
+              :loading="urlUploading"
+              @search="onUploadByUrl"
+            />
+          </div>
         </a-form-item>
 
         <a-form-item label="昵称">
@@ -58,6 +67,8 @@ const form = reactive({
 
 const fileList = ref<any[]>([])
 const saving = ref(false)
+const avatarUrl = ref('')
+const urlUploading = ref(false)
 
 const beforeUpload = (file: File) => {
   const isImage = file.type.startsWith('image/')
@@ -118,6 +129,43 @@ const customUpload = async (options: any) => {
 const onRemove = () => {
   fileList.value = []
   form.userAvatar = ''
+}
+
+const onUploadByUrl = async () => {
+  const url = avatarUrl.value.trim()
+  if (!url) return message.warning('请输入图片URL')
+  if (!/^https?:\/\//i.test(url)) return message.error('仅支持 http/https 链接')
+  try {
+    urlUploading.value = true
+    fileList.value = [{ uid: 'url', name: 'avatar-url', status: 'uploading', percent: 30 }]
+    const res = await fileController.uploadAvatarPendingByUrlUsingPost({ url })
+    if (res?.data?.code === 0 && res.data.data) {
+      const data = res.data.data
+      const showUrl = data.url || data.thumbnailUrl
+      // 提交审核
+      const submit = await userController.submitAvatarReviewUsingPost({
+        objectKey: data.objectKey,
+        url: data.url,
+        thumbnailKey: data.thumbnailKey,
+        thumbnailUrl: data.thumbnailUrl,
+        etag: data.etag,
+        sha256: data.sha256,
+        width: data.picWidth,
+        height: data.picHeight,
+        format: data.picFormat,
+        size: data.picSize,
+      } as any)
+      if (submit?.data?.code !== 0) throw new Error(submit?.data?.message || 'submit failed')
+      fileList.value = showUrl ? [{ uid: 'url', name: 'avatar', status: 'done', url: showUrl, percent: 100 }] : []
+      message.success('头像已提交，等待管理员审核')
+    } else {
+      message.error(res?.data?.message || '上传失败')
+    }
+  } catch (e) {
+    message.error('URL 上传失败')
+  } finally {
+    urlUploading.value = false
+  }
 }
 
 const load = async () => {

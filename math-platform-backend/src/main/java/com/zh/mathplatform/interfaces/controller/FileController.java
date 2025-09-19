@@ -5,18 +5,19 @@ import com.zh.mathplatform.infrastructure.common.ResultUtils;
 import com.zh.mathplatform.infrastructure.exception.BusinessException;
 import com.zh.mathplatform.infrastructure.exception.ErrorCode;
 import com.zh.mathplatform.infrastructure.manager.upload.FilePictureUpload;
+import com.zh.mathplatform.infrastructure.manager.upload.UrlPictureUpload;
 import com.zh.mathplatform.infrastructure.manager.upload.model.dto.file.UploadPictureResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestPart;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,6 +80,7 @@ public class FileController {
 
     // ========== COS 上传（返回富信息） ==========
     private final FilePictureUpload filePictureUpload;
+    private final UrlPictureUpload urlPictureUpload;
 
     @PostMapping(value = "/upload/cos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<UploadPictureResult> uploadToCos(
@@ -97,6 +99,18 @@ public class FileController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "未选择文件");
         }
         var result = filePictureUpload.uploadPicture(file, "avatar/quarantine");
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 头像隔离区上传（URL 方式）
+     */
+    @PostMapping(value = "/upload/avatar/pendingByUrl", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<UploadPictureResult> uploadAvatarPendingByUrl(@RequestBody com.zh.mathplatform.interfaces.dto.user.AvatarUrlUploadRequest req) {
+        if (req == null || !StringUtils.hasText(req.getUrl())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "图片链接不能为空");
+        }
+        var result = urlPictureUpload.uploadPicture(req.getUrl(), "avatar/quarantine");
         return ResultUtils.success(result);
     }
 

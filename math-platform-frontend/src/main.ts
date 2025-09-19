@@ -8,7 +8,12 @@ import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 import 'katex/dist/katex.min.css'
 import 'highlight.js/styles/github.min.css'
+import '@/styles/main.scss'
+import { applyDesignTokens } from '@/styles/tokens/design-tokens'
 import '@/access.ts'
+
+// 应用企业级设计token
+applyDesignTokens()
 
 const app = createApp(App)
 

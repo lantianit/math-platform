@@ -1,5 +1,5 @@
 import { h } from 'vue'
-import { HomeOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, PictureOutlined } from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue'
 
 // 菜单项配置接口
@@ -25,6 +25,13 @@ export const menuConfig: MenuItem[] = [
     component: () => import('@/pages/HomePage.vue'),
   },
   {
+    key: '/wallpaper',
+    label: '学习加油壁纸',
+    title: '学习加油壁纸',
+    icon: () => h(PictureOutlined),
+    component: () => import('@/pages/WallpaperPage.vue'),
+  },
+  {
     key: '/admin/userManage',
     label: '用户管理',
     title: '用户管理',
@@ -37,6 +44,13 @@ export const menuConfig: MenuItem[] = [
     label: '头像审核',
     title: '头像审核',
     component: () => import('@/pages/admin/AvatarReviewPage.vue'),
+    requireAdmin: true,
+  },
+  {
+    key: '/admin/wallpaper',
+    label: '壁纸管理',
+    title: '壁纸管理',
+    component: () => import('@/pages/admin/WallpaperManagePage.vue'),
     requireAdmin: true,
   }
 ]
