@@ -4,7 +4,7 @@
  */
 
 // 导入设计token变量
-@import './base/variables.scss';
+@use './base/variables.scss';
 
 // ===== 全局基础样式 =====
 * {

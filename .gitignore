@@ -225,6 +225,10 @@ math-platform-frontend/.env.development.local
 math-platform-frontend/.env.test.local
 math-platform-frontend/.env.production.local
 
+# 中间件文件夹 (Redis等中间件)
+中间件/
+中间件/**/*
+
 # 文档生成
 docs/_build/
 docs/.doctrees/
