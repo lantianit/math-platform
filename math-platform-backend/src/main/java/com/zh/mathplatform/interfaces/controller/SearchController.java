@@ -251,12 +251,30 @@ public class SearchController {
             if (json == null || json.trim().isEmpty()) {
                 return new String[0];
             }
+            
+            String trimmedJson = json.trim();
             // 验证JSON格式
-            if (!json.trim().startsWith("[") || !json.trim().endsWith("]")) {
+            if (!trimmedJson.startsWith("[") || !trimmedJson.endsWith("]")) {
                 log.warn("JSON格式不正确，期望数组格式: {}", json);
                 return new String[0];
             }
-            return JSONUtil.toBean(json, String[].class);
+            
+            // 处理空数组情况
+            if ("[]".equals(trimmedJson)) {
+                return new String[0];
+            }
+            
+            // 使用JSONArray来解析数组，更安全
+            cn.hutool.json.JSONArray jsonArray = JSONUtil.parseArray(trimmedJson);
+            if (jsonArray == null || jsonArray.isEmpty()) {
+                return new String[0];
+            }
+            // 转换为String数组
+            String[] result = new String[jsonArray.size()];
+            for (int i = 0; i < jsonArray.size(); i++) {
+                result[i] = jsonArray.getStr(i);
+            }
+            return result;
         } catch (Exception e) {
             log.error("JSON反序列化失败: {}", json, e);
             return new String[0];

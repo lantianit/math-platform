@@ -110,3 +110,24 @@ sa-token:
 ## 阿里云AI配置
 #aliYunAi:
 #  # 配置项待添加
+
+# 图片压缩配置
+picture:
+  compression:
+    # 是否启用图片压缩
+    enabled: true
+    # 压缩图质量（1-100）
+    quality: 85
+    # 缩略图质量（1-100）
+    thumbnail-quality: 75
+    # 缩略图最大尺寸
+    thumbnail-max-width: 256
+    thumbnail-max-height: 256
+    # 生成缩略图的最小文件大小（字节）
+    thumbnail-min-file-size: 2048
+    # 目标压缩格式（webp/avif）
+    target-format: webp
+    # 是否保留原图
+    keep-original: false
+    # 是否启用渐进式JPEG
+    progressive-jpeg: true

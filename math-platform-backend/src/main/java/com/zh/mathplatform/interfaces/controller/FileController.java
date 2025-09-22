@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,6 +82,7 @@ public class FileController {
     // ========== COS 上传（返回富信息） ==========
     private final FilePictureUpload filePictureUpload;
     private final UrlPictureUpload urlPictureUpload;
+    private final com.zh.mathplatform.infrastructure.manager.upload.PictureCompressionStatsManager statsManager;
 
     @PostMapping(value = "/upload/cos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<UploadPictureResult> uploadToCos(
@@ -112,6 +114,24 @@ public class FileController {
         }
         var result = urlPictureUpload.uploadPicture(req.getUrl(), "avatar/quarantine");
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 获取图片压缩统计信息（管理员接口）
+     */
+    @GetMapping("/compression/stats")
+    public BaseResponse<com.zh.mathplatform.infrastructure.manager.upload.PictureCompressionStatsManager.CompressionSummaryStats> getCompressionStats() {
+        var stats = statsManager.getSummaryStats();
+        return ResultUtils.success(stats);
+    }
+
+    /**
+     * 重置图片压缩统计信息（管理员接口）
+     */
+    @PostMapping("/compression/stats/reset")
+    public BaseResponse<String> resetCompressionStats() {
+        statsManager.resetStats();
+        return ResultUtils.success("统计信息已重置");
     }
 
     private void ensureUploadDir() {

@@ -20,6 +20,8 @@ public class UploadPictureResult {
     // 上传对象的校验信息
     private String etag;
     private String sha256;
+    // 图片压缩统计信息
+    private PictureCompressionStats compressionStats;
 }
 
 
