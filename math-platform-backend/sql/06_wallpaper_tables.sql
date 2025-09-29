@@ -1,5 +1,18 @@
+-- ========================================
+-- Math Platform 壁纸功能相关表
+-- 版本: v2.0
+-- 功能: 学习加油壁纸管理
+-- ========================================
+
+USE mathplatform;
+
+-- 清理旧表
+DROP TABLE IF EXISTS wallpaper;
+
+-- ============== 壁纸功能相关表 ==============
+
 -- 学习加油壁纸表
-CREATE TABLE wallpaper
+CREATE TABLE IF NOT EXISTS wallpaper
 (
     id             BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
     name           VARCHAR(255) NOT NULL COMMENT '壁纸名称',
@@ -24,4 +37,4 @@ CREATE TABLE wallpaper
     INDEX idx_create_time (create_time),
     INDEX idx_download_count (download_count),
     INDEX idx_like_count (like_count)
-) COMMENT ='学习加油壁纸表';
+) COMMENT ='学习加油壁纸表' COLLATE = utf8mb4_unicode_ci;

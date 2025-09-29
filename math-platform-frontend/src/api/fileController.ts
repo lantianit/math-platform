@@ -2,6 +2,22 @@
 /* eslint-disable */
 import request from '@/request'
 
+/** getCompressionStats GET /api/file/compression/stats */
+export async function getCompressionStatsUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseCompressionSummaryStats_>('/api/file/compression/stats', {
+    method: 'GET',
+    ...(options || {}),
+  })
+}
+
+/** resetCompressionStats POST /api/file/compression/stats/reset */
+export async function resetCompressionStatsUsingPost(options?: { [key: string]: any }) {
+  return request<API.BaseResponseString_>('/api/file/compression/stats/reset', {
+    method: 'POST',
+    ...(options || {}),
+  })
+}
+
 /** upload POST /api/file/upload */
 export async function uploadUsingPost(
   body: {

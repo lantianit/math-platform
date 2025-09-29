@@ -2,6 +2,30 @@
 /* eslint-disable */
 import request from '@/request'
 
+/** refreshCache POST /api/search/cache/refresh */
+export async function refreshCacheUsingPost(options?: { [key: string]: any }) {
+  return request<API.BaseResponseObject_>('/api/search/cache/refresh', {
+    method: 'POST',
+    ...(options || {}),
+  })
+}
+
+/** getCacheStats GET /api/search/cache/stats */
+export async function getCacheStatsUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseObject_>('/api/search/cache/stats', {
+    method: 'GET',
+    ...(options || {}),
+  })
+}
+
+/** testSerialization GET /api/search/cache/test */
+export async function testSerializationUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseObject_>('/api/search/cache/test', {
+    method: 'GET',
+    ...(options || {}),
+  })
+}
+
 /** getHotKeywords GET /api/search/hot-keywords */
 export async function getHotKeywordsUsingGet(options?: { [key: string]: any }) {
   return request<API.BaseResponseArrayString_>('/api/search/hot-keywords', {

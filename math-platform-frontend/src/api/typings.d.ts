@@ -21,38 +21,6 @@ declare namespace API {
     url?: string
   }
 
-  type BaseResponseInteger = {
-    code?: number
-    data?: number
-    message?: string
-  }
-
-  type BaseResponseBoolean = {
-    code?: number
-    data?: boolean
-    message?: string
-  }
-
-  type BaseResponseWallpaperVO = {
-    code?: number
-    data?: WallpaperVO
-    message?: string
-  }
-
-  type BaseResponsePageWallpaperVO = {
-    code?: number
-    data?: IPageWallpaperVO_
-    message?: string
-  }
-
-  type IPageWallpaperVO_ = {
-    current?: number
-    pages?: number
-    records?: WallpaperVO[]
-    size?: number
-    total?: number
-  }
-
   type BaseResponseArrayString_ = {
     code?: number
     data?: string[]
@@ -68,6 +36,12 @@ declare namespace API {
   type BaseResponseComment_ = {
     code?: number
     data?: Comment
+    message?: string
+  }
+
+  type BaseResponseCompressionSummaryStats_ = {
+    code?: number
+    data?: CompressionSummaryStats
     message?: string
   }
 
@@ -137,6 +111,11 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseObject_ = {
+    code?: number
+    data?: Record<string, any>
+    message?: string
+  }
 
   type BaseResponsePageUserAvatarReview_ = {
     code?: number
@@ -147,6 +126,12 @@ declare namespace API {
   type BaseResponsePageUserVO_ = {
     code?: number
     data?: PageUserVO_
+    message?: string
+  }
+
+  type BaseResponsePageWallpaperVO_ = {
+    code?: number
+    data?: PageWallpaperVO_
     message?: string
   }
 
@@ -183,6 +168,12 @@ declare namespace API {
   type BaseResponseUserVO_ = {
     code?: number
     data?: UserVO
+    message?: string
+  }
+
+  type BaseResponseWallpaperVO_ = {
+    code?: number
+    data?: WallpaperVO
     message?: string
   }
 
@@ -233,6 +224,17 @@ declare namespace API {
   type CommentUpdateRequest = {
     content?: string
     id?: number
+  }
+
+  type CompressionSummaryStats = {
+    averageCompressionRatio?: number
+    averageProcessingTime?: number
+    compressionSuccessRate?: number
+    formattedTotalSpaceSaved?: string
+    totalCompressions?: number
+    totalProcessingTime?: number
+    totalSpaceSaved?: number
+    totalUploads?: number
   }
 
   type DeleteRequest = {
@@ -399,7 +401,6 @@ declare namespace API {
     type?: string
   }
 
-
   type PageRequest = {
     current?: number
     pageSize?: number
@@ -423,66 +424,28 @@ declare namespace API {
     total?: number
   }
 
-  // 壁纸相关类型定义
-  type WallpaperBatchCrawlRequest = {
-    /** 壁纸分类 */
-    category?: string
-    /** 抓取数量 */
-    count?: number
-    /** 名称前缀 */
-    namePrefix?: string
-    /** 搜索关键词 */
-    searchText: string
-  }
-
-  type WallpaperQueryRequest = {
-    /** 壁纸分类 */
-    category?: string
+  type PageWallpaperVO_ = {
     current?: number
-    /** 壁纸名称 */
-    name?: string
-    pageSize?: number
-    sortField?: string
-    sortOrder?: string
-    /** 状态 */
-    status?: number
-    /** 壁纸标签 */
-    tag?: string
-    /** 创建用户ID */
-    userId?: number
+    pages?: number
+    records?: WallpaperVO[]
+    size?: number
+    total?: number
   }
 
-  type WallpaperVO = {
-    /** 壁纸分类 */
-    category?: string
-    /** 创建时间 */
-    createTime?: string
-    /** 壁纸描述 */
-    description?: string
-    /** 下载次数 */
-    downloadCount?: number
-    /** 文件大小 */
-    fileSize?: number
-    /** 图片高度 */
-    height?: number
-    /** 壁纸ID */
-    id?: number
-    /** 点赞数 */
-    likeCount?: number
-    /** 壁纸名称 */
-    name?: string
-    /** 状态 */
-    status?: number
-    /** 壁纸标签列表 */
-    tags?: string[]
-    /** 壁纸缩略图URL */
-    thumbnailUrl?: string
-    /** 壁纸URL */
-    url?: string
-    /** 创建用户ID */
-    userId?: number
-    /** 图片宽度 */
-    width?: number
+  type PictureCompressionStats = {
+    compressedFormat?: string
+    compressedSize?: number
+    compressionRatio?: number
+    formattedCompressedSize?: string
+    formattedCompressionRatio?: string
+    formattedOriginalSize?: string
+    formattedSavedSpace?: string
+    hasThumbnail?: boolean
+    originalFormat?: string
+    originalSize?: number
+    processingTime?: number
+    savedSpace?: number
+    thumbnailSize?: number
   }
 
   type Post = {
@@ -598,6 +561,7 @@ declare namespace API {
   }
 
   type UploadPictureResult = {
+    compressionStats?: PictureCompressionStats
     etag?: string
     objectKey?: string
     picColor?: string
@@ -734,5 +698,66 @@ declare namespace API {
     userName?: string
     userProfile?: string
     userRole?: string
+  }
+
+  type WallpaperBatchCrawlRequest = {
+    /** Category */
+    category?: string
+    /** Crawl count */
+    count?: number
+    /** Name prefix */
+    namePrefix?: string
+    /** Search text */
+    searchText: string
+  }
+
+  type WallpaperQueryRequest = {
+    /** Category */
+    category?: string
+    current?: number
+    /** Wallpaper name */
+    name?: string
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    /** Status */
+    status?: number
+    /** Tag */
+    tag?: string
+    /** User ID */
+    userId?: number
+  }
+
+  type WallpaperVO = {
+    /** Category */
+    category?: string
+    /** Create time */
+    createTime?: string
+    /** Description */
+    description?: string
+    /** Download count */
+    downloadCount?: number
+    /** File size */
+    fileSize?: number
+    /** Height */
+    height?: number
+    /** Wallpaper ID */
+    id?: number
+    /** Like count */
+    likeCount?: number
+    /** Wallpaper name */
+    name?: string
+    /** Status */
+    status?: number
+    /** Tags */
+    tags?: string[]
+    /** Thumbnail URL */
+    thumbnailUrl?: string
+    /** Wallpaper URL */
+    url?: string
+    /** User ID */
+    userId?: number
+    /** Width */
+    width?: number
   }
 }
