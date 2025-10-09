@@ -77,16 +77,17 @@
         {{ (post as any).contentSummary || (post as any).content?.substring(0, 200) || '暂无内容' }}
       </a-typography-paragraph>
       
-      <!-- 帖子图片 -->
+      <!-- 帖子图片（优化：列表使用缩略图，点击查看原图） -->
       <div v-if="postImages.length > 0" class="post-images">
         <a-image-preview-group>
           <div class="image-grid" :class="`grid-${Math.min(postImages.length, 3)}`">
             <a-image
               v-for="(image, index) in postImages.slice(0, 9)"
               :key="index"
-              :src="image"
+              :src="getThumbnailUrl(image)"
               :preview="{ src: image }"
               class="post-image"
+              loading="lazy"
               @click.stop
             />
             <div 
@@ -273,6 +274,36 @@ const formatCount = (count?: number) => {
   if (count < 1000) return count.toString()
   if (count < 10000) return `${(count / 1000).toFixed(1)}k`
   return `${(count / 10000).toFixed(1)}w`
+}
+
+/**
+ * 获取缩略图 URL（如果存在的话）
+ * 优化策略：列表页使用缩略图加快加载速度，点击预览时查看原图
+ * 
+ * @param imageUrl 原图URL
+ * @returns 缩略图URL（如果存在）或原图URL
+ */
+const getThumbnailUrl = (imageUrl: string): string => {
+  if (!imageUrl) return imageUrl
+  
+  // 如果已经是缩略图，直接返回
+  if (imageUrl.includes('_thumbnail')) {
+    return imageUrl
+  }
+  
+  // 尝试构造缩略图URL
+  // 例如：photo.webp -> photo_thumbnail.webp
+  const lastDotIndex = imageUrl.lastIndexOf('.')
+  if (lastDotIndex > 0) {
+    const thumbnailUrl = imageUrl.substring(0, lastDotIndex) + 
+                         '_thumbnail' + 
+                         imageUrl.substring(lastDotIndex)
+    // 返回缩略图URL，如果缩略图不存在，img标签的onerror会回退到原图
+    return thumbnailUrl
+  }
+  
+  // 无法构造缩略图URL，返回原图
+  return imageUrl
 }
 
 // 使用统一分类工具函数

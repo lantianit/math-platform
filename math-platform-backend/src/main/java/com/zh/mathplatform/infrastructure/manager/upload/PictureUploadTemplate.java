@@ -66,8 +66,13 @@ public abstract class PictureUploadTemplate {
             long processingTime = System.currentTimeMillis() - startTime;
             
             if (CollUtil.isNotEmpty(objectList)) {
+                // 第一个元素是压缩图（WebP格式，保持原尺寸）
                 CIObject compressedCiObject = objectList.get(0);
+                
+                // 第二个元素是缩略图（如果有的话）
+                // 如果没有生成缩略图（文件太小），则缩略图 = 压缩图
                 CIObject thumbnailCiObject = objectList.size() > 1 ? objectList.get(1) : compressedCiObject;
+                boolean hasThumbnail = objectList.size() > 1;
                 
                 // 创建压缩统计信息
                 PictureCompressionStats stats = new PictureCompressionStats();
@@ -75,9 +80,9 @@ public abstract class PictureUploadTemplate {
                 stats.setCompressedSize(compressedCiObject.getSize().longValue());
                 stats.setOriginalFormat(originalFormat);
                 stats.setCompressedFormat(compressedCiObject.getFormat());
-                stats.setHasThumbnail(objectList.size() > 1);
+                stats.setHasThumbnail(hasThumbnail);
                 stats.setProcessingTime(processingTime);
-                if (stats.isHasThumbnail() && objectList.size() > 1) {
+                if (hasThumbnail) {
                     stats.setThumbnailSize(objectList.get(1).getSize().longValue());
                 }
                 stats.calculateCompressionRatio();
@@ -90,12 +95,23 @@ public abstract class PictureUploadTemplate {
                 // 记录统计信息
                 statsManager.recordCompressionStats(stats);
                 
-                log.info("图片上传成功，已压缩为{}格式，{} -> {}，压缩率: {}，处理耗时: {}ms", 
-                    stats.getCompressedFormat(),
-                    stats.getFormattedOriginalSize(),
-                    stats.getFormattedCompressedSize(),
-                    stats.getFormattedCompressionRatio(),
-                    processingTime);
+                // 记录日志
+                if (hasThumbnail) {
+                    log.info("图片上传成功，已压缩为{}格式，{} -> {}，压缩率: {}，缩略图: {}，处理耗时: {}ms", 
+                        stats.getCompressedFormat(),
+                        stats.getFormattedOriginalSize(),
+                        stats.getFormattedCompressedSize(),
+                        stats.getFormattedCompressionRatio(),
+                        stats.getFormattedThumbnailSize(),
+                        processingTime);
+                } else {
+                    log.info("图片上传成功，已压缩为{}格式，{} -> {}，压缩率: {}，未生成缩略图（文件较小），处理耗时: {}ms", 
+                        stats.getCompressedFormat(),
+                        stats.getFormattedOriginalSize(),
+                        stats.getFormattedCompressedSize(),
+                        stats.getFormattedCompressionRatio(),
+                        processingTime);
+                }
                 return r;
             }
             

@@ -11,6 +11,7 @@ import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.PicOperations;
 import com.zh.mathplatform.infrastructure.config.CosClientConfig;
 import com.zh.mathplatform.infrastructure.config.PictureCompressionConfig;
+import groovy.util.logging.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,7 +19,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.dev33.satoken.SaManager.log;
+
 @Component
+@Slf4j
 public class CosManager {
 
     @Resource
@@ -60,7 +64,7 @@ public class CosManager {
         picOperations.setIsPicInfo(1);
         List<PicOperations.Rule> rules = new ArrayList<>();
         
-        // 图片压缩（转成目标格式）
+        // 规则1: 图片压缩（转成目标格式，保持原始尺寸）
         String compressedKey = FileUtil.mainName(key) + compressionConfig.getCompressionExtension();
         PicOperations.Rule compressRule = new PicOperations.Rule();
         compressRule.setFileId(compressedKey);
@@ -68,14 +72,21 @@ public class CosManager {
         compressRule.setRule(compressionConfig.getCompressionRule());
         rules.add(compressRule);
         
-        // 对于大于设定大小的图片，生成缩略图
+        // 规则2: 缩略图生成（缩小尺寸用于列表预览）
+        // 仅对大于设定大小（默认 2KB）的图片生成缩略图
+        // 避免小图片生成缩略图反而更大的情况
         if (file.length() > compressionConfig.getThumbnailMinFileSize()) {
             PicOperations.Rule thumbnailRule = new PicOperations.Rule();
             String thumbnailKey = FileUtil.mainName(key) + "_thumbnail" + compressionConfig.getThumbnailExtension();
             thumbnailRule.setFileId(thumbnailKey);
             thumbnailRule.setBucket(cosClientConfig.getBucket());
+            // 缩略图规则：thumbnail/128x128>（大于原图时不处理）+ format/webp + quality/75
             thumbnailRule.setRule(compressionConfig.getThumbnailRule());
             rules.add(thumbnailRule);
+            log.debug("图片大小 {} 字节，将生成缩略图", file.length());
+        } else {
+            log.debug("图片大小 {} 字节，小于阈值 {}，跳过缩略图生成",
+                file.length(), compressionConfig.getThumbnailMinFileSize());
         }
         
         // 构造处理参数

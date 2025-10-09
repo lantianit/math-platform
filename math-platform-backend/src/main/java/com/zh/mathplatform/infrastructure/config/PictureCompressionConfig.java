@@ -33,14 +33,16 @@ public class PictureCompressionConfig {
     private int thumbnailQuality = 75;
 
     /**
-     * 缩略图最大宽度
+     * 缩略图最大宽度（用于列表预览）
+     * 推荐值：128（平衡清晰度和加载速度）
      */
-    private int thumbnailMaxWidth = 256;
+    private int thumbnailMaxWidth = 128;
 
     /**
-     * 缩略图最大高度
+     * 缩略图最大高度（用于列表预览）
+     * 推荐值：128（平衡清晰度和加载速度）
      */
-    private int thumbnailMaxHeight = 256;
+    private int thumbnailMaxHeight = 128;
 
     /**
      * 生成缩略图的最小文件大小（字节）

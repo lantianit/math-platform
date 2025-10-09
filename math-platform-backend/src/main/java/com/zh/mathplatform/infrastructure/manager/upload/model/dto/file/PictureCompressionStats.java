@@ -90,6 +90,10 @@ public class PictureCompressionStats {
         return formatFileSize(getSavedSpace());
     }
     
+    public String getFormattedThumbnailSize() {
+        return formatFileSize(thumbnailSize);
+    }
+    
     private String formatFileSize(long size) {
         if (size < 1024) {
             return size + " B";

@@ -120,9 +120,9 @@ picture:
     quality: 85
     # 缩略图质量（1-100）
     thumbnail-quality: 75
-    # 缩略图最大尺寸
-    thumbnail-max-width: 256
-    thumbnail-max-height: 256
+    # 缩略图最大尺寸（用于列表预览，尺寸越小加载越快）
+    thumbnail-max-width: 128
+    thumbnail-max-height: 128
     # 生成缩略图的最小文件大小（字节）
     thumbnail-min-file-size: 2048
     # 目标压缩格式（webp/avif）

@@ -10,7 +10,6 @@ import * as postController from './postController'
 import * as searchController from './searchController'
 import * as socialController from './socialController'
 import * as userController from './userController'
-import * as wallpaperController from './wallpaperController'
 import * as bizhiguanli from './bizhiguanli'
 export default {
   commentController,
@@ -21,6 +20,5 @@ export default {
   searchController,
   socialController,
   userController,
-  wallpaperController,
   bizhiguanli,
 }
