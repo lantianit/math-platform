@@ -163,7 +163,7 @@ import {
   HeartOutlined,
   PictureOutlined
 } from '@ant-design/icons-vue'
-import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost } from '@/api/wallpaperController'
+import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost } from '@/api/bizhiguanli'
 
 // 响应式数据
 const wallpaperList = ref<API.WallpaperVO[]>([])

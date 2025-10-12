@@ -157,7 +157,7 @@ import {
   SettingOutlined,
   CloudDownloadOutlined
 } from '@ant-design/icons-vue'
-import { batchCrawlWallpapersUsingPost, listAllWallpapersByPageUsingPost } from '@/api/wallpaperController'
+import { batchCrawlWallpapersUsingPost, listAllWallpapersByPageUsingPost } from '@/api/bizhiguanli'
 
 const router = useRouter()
 

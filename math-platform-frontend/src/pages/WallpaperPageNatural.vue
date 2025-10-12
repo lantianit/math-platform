@@ -180,7 +180,7 @@ import {
   DownloadOutlined,
   HeartOutlined
 } from '@ant-design/icons-vue'
-import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost } from '@/api/wallpaperController'
+import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost } from '@/api/bizhiguanli'
 
 const wallpaperList = ref<API.WallpaperVO[]>([])
 const loading = ref(false)

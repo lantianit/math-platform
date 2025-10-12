@@ -133,7 +133,7 @@ import { SearchOutlined } from '@ant-design/icons-vue'
 import VirtualMasonryGrid from '@/components/business/VirtualMasonryGrid.vue'
 import WallpaperCard from '@/components/business/WallpaperCard.vue'
 import WallpaperDetailModal from '@/components/business/WallpaperDetailModal.vue'
-import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost } from '@/api/wallpaperController'
+import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost } from '@/api/bizhiguanli'
 
 interface WallpaperItem extends API.WallpaperVO {
   loading?: boolean

@@ -244,7 +244,7 @@ import {
   DownloadOutlined,
   HeartOutlined
 } from '@ant-design/icons-vue'
-import { listAllWallpapersByPageUsingPost } from '@/api/wallpaperController'
+import { listAllWallpapersByPageUsingPost } from '@/api/bizhiguanli'
 
 const router = useRouter()
 
