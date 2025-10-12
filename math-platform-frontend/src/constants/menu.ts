@@ -1,5 +1,5 @@
 import { h } from 'vue'
-import { HomeOutlined, PictureOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, PictureOutlined, FileTextOutlined } from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue'
 
 // 菜单项配置接口
@@ -32,6 +32,13 @@ export const menuConfig: MenuItem[] = [
     component: () => import('@/pages/WallpaperPage.vue'),
   },
   {
+    key: '/note/my',
+    label: '我的笔记',
+    title: '我的笔记',
+    icon: () => h(FileTextOutlined),
+    component: () => import('@/pages/note/MyNotesPage.vue'),
+  },
+  {
     key: '/admin/userManage',
     label: '用户管理',
     title: '用户管理',
@@ -51,6 +58,13 @@ export const menuConfig: MenuItem[] = [
     label: '壁纸管理',
     title: '壁纸管理',
     component: () => import('@/pages/admin/WallpaperManagePage.vue'),
+    requireAdmin: true,
+  },
+  {
+    key: '/admin/note-space',
+    label: '笔记空间管理',
+    title: '笔记空间管理',
+    component: () => import('@/pages/admin/NoteSpaceManagePage.vue'),
     requireAdmin: true,
   }
 ]

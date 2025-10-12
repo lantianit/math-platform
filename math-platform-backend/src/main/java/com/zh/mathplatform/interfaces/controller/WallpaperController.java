@@ -31,7 +31,7 @@ import javax.validation.Valid;
 @RequestMapping("/wallpaper")
 @RequiredArgsConstructor
 @Slf4j
-@Api(tags = "壁纸管理")
+@Api(tags = "wallpaperController")
 public class WallpaperController {
 
     private final WallpaperApplicationService wallpaperApplicationService;

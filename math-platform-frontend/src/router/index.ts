@@ -83,6 +83,42 @@ const router = createRouter({
       name: '批量抓取壁纸',
       component: () => import('@/pages/admin/WallpaperBatchCrawlPage.vue'),
     },
+    // 笔记相关路由
+    {
+      path: '/note/my',
+      name: '我的笔记',
+      component: () => import('@/pages/note/MyNotesPage.vue'),
+    },
+    {
+      path: '/note/space/add',
+      name: '创建笔记空间',
+      component: () => import('@/pages/note/AddNoteSpacePage.vue'),
+    },
+    {
+      path: '/note/space/edit/:id',
+      name: '编辑笔记空间',
+      component: () => import('@/pages/note/AddNoteSpacePage.vue'),
+    },
+    {
+      path: '/note/space/:id',
+      name: '笔记空间详情',
+      component: () => import('@/pages/note/NoteSpaceDetailPage.vue'),
+    },
+    {
+      path: '/note/add',
+      name: '创建笔记',
+      component: () => import('@/pages/note/AddNotePage.vue'),
+    },
+    {
+      path: '/note/edit/:id',
+      name: '编辑笔记',
+      component: () => import('@/pages/note/AddNotePage.vue'),
+    },
+    {
+      path: '/admin/note-space',
+      name: '笔记空间管理',
+      component: () => import('@/pages/admin/NoteSpaceManagePage.vue'),
+    },
   ],
 })
 

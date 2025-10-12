@@ -81,6 +81,12 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseListNoteSpaceLevel_ = {
+    code?: number
+    data?: NoteSpaceLevel[]
+    message?: string
+  }
+
   type BaseResponseListNotification_ = {
     code?: number
     data?: Notification[]
@@ -111,9 +117,45 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseNoteSpaceVO_ = {
+    code?: number
+    data?: NoteSpaceVO
+    message?: string
+  }
+
+  type BaseResponseNoteVO_ = {
+    code?: number
+    data?: NoteVO
+    message?: string
+  }
+
   type BaseResponseObject_ = {
     code?: number
     data?: Record<string, any>
+    message?: string
+  }
+
+  type BaseResponsePageNote_ = {
+    code?: number
+    data?: PageNote_
+    message?: string
+  }
+
+  type BaseResponsePageNoteSpace_ = {
+    code?: number
+    data?: PageNoteSpace_
+    message?: string
+  }
+
+  type BaseResponsePageNoteSpaceVO_ = {
+    code?: number
+    data?: PageNoteSpaceVO_
+    message?: string
+  }
+
+  type BaseResponsePageNoteVO_ = {
+    code?: number
+    data?: PageNoteVO_
     message?: string
   }
 
@@ -271,6 +313,16 @@ declare namespace API {
     limit?: number
   }
 
+  type getNoteSpaceVOByIdUsingGETParams = {
+    /** id */
+    id?: number
+  }
+
+  type getNoteVOByIdUsingGETParams = {
+    /** id */
+    id?: number
+  }
+
   type getPostByIdUsingGETParams = {
     /** id */
     id: number
@@ -391,6 +443,154 @@ declare namespace API {
     userRole?: string
   }
 
+  type Note = {
+    attachmentSize?: number
+    attachments?: string
+    auditStatus?: number
+    auditTime?: string
+    auditUserId?: number
+    category?: string
+    content?: string
+    contentSummary?: string
+    createTime?: string
+    editTime?: string
+    favouriteCount?: number
+    id?: number
+    isDelete?: number
+    likeCount?: number
+    publishTime?: string
+    spaceId?: number
+    status?: number
+    tags?: string
+    title?: string
+    updateTime?: string
+    userId?: number
+    viewCount?: number
+  }
+
+  type NoteAddRequest = {
+    attachments?: string
+    category?: string
+    content?: string
+    spaceId?: number
+    status?: number
+    tags?: string
+    title?: string
+  }
+
+  type NoteEditRequest = {
+    attachments?: string
+    category?: string
+    content?: string
+    id?: number
+    status?: number
+    tags?: string
+    title?: string
+  }
+
+  type NoteQueryRequest = {
+    category?: string
+    current?: number
+    id?: number
+    pageSize?: number
+    searchText?: string
+    sortField?: string
+    sortOrder?: string
+    spaceId?: number
+    status?: number
+    title?: string
+    userId?: number
+  }
+
+  type NoteSpace = {
+    createTime?: string
+    editTime?: string
+    id?: number
+    isDelete?: number
+    maxNoteCount?: number
+    maxSize?: number
+    spaceLevel?: number
+    spaceName?: string
+    totalNoteCount?: number
+    totalSize?: number
+    updateTime?: string
+    userId?: number
+  }
+
+  type NoteSpaceAddRequest = {
+    spaceLevel?: number
+    spaceName?: string
+  }
+
+  type NoteSpaceEditRequest = {
+    id?: number
+    spaceName?: string
+  }
+
+  type NoteSpaceLevel = {
+    maxCount?: number
+    maxSize?: number
+    text?: string
+    value?: number
+  }
+
+  type NoteSpaceQueryRequest = {
+    current?: number
+    id?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    spaceLevel?: number
+    spaceName?: string
+    userId?: number
+  }
+
+  type NoteSpaceUpdateRequest = {
+    id?: number
+    maxNoteCount?: number
+    maxSize?: number
+    spaceLevel?: number
+    spaceName?: string
+  }
+
+  type NoteSpaceVO = {
+    createTime?: string
+    editTime?: string
+    id?: number
+    maxNoteCount?: number
+    maxSize?: number
+    spaceLevel?: number
+    spaceName?: string
+    totalNoteCount?: number
+    totalSize?: number
+    updateTime?: string
+    user?: UserVO
+    userId?: number
+  }
+
+  type NoteVO = {
+    attachmentSize?: number
+    attachments?: string
+    auditStatus?: number
+    category?: string
+    content?: string
+    contentSummary?: string
+    createTime?: string
+    editTime?: string
+    favouriteCount?: number
+    id?: number
+    likeCount?: number
+    publishTime?: string
+    spaceId?: number
+    status?: number
+    tags?: string
+    title?: string
+    updateTime?: string
+    user?: UserVO
+    userId?: number
+    viewCount?: number
+  }
+
   type Notification = {
     content?: string
     createTime?: string
@@ -399,6 +599,38 @@ declare namespace API {
     readFlag?: number
     receiverId?: number
     type?: string
+  }
+
+  type PageNote_ = {
+    current?: number
+    pages?: number
+    records?: Note[]
+    size?: number
+    total?: number
+  }
+
+  type PageNoteSpace_ = {
+    current?: number
+    pages?: number
+    records?: NoteSpace[]
+    size?: number
+    total?: number
+  }
+
+  type PageNoteSpaceVO_ = {
+    current?: number
+    pages?: number
+    records?: NoteSpaceVO[]
+    size?: number
+    total?: number
+  }
+
+  type PageNoteVO_ = {
+    current?: number
+    pages?: number
+    records?: NoteVO[]
+    size?: number
+    total?: number
   }
 
   type PageRequest = {
@@ -440,6 +672,7 @@ declare namespace API {
     formattedCompressionRatio?: string
     formattedOriginalSize?: string
     formattedSavedSpace?: string
+    formattedThumbnailSize?: string
     hasThumbnail?: boolean
     originalFormat?: string
     originalSize?: number
