@@ -109,6 +109,13 @@
       </div>
     </template>
   </a-modal>
+
+  <!-- 分享弹窗 -->
+  <ShareModal 
+    ref="shareModalRef" 
+    :title="props.wallpaper?.name || '分享壁纸'" 
+    :link="shareLink" 
+  />
 </template>
 
 <script setup lang="ts">
@@ -121,6 +128,7 @@ import {
   DownloadOutlined,
   ShareAltOutlined
 } from '@ant-design/icons-vue'
+import ShareModal from '@/components/ShareModal.vue'
 
 interface Props {
   open: boolean
@@ -146,6 +154,10 @@ const imageLoading = ref(true)
 const downloadLoading = ref(false)
 const likeLoading = ref(false)
 const isLiked = ref(false)
+
+// 分享相关
+const shareModalRef = ref()
+const shareLink = ref<string>('')
 
 const modalWidth = computed(() => {
   if (!props.wallpaper?.width || !props.wallpaper?.height) return '80%'
@@ -223,22 +235,15 @@ const handleLike = () => {
   }, 500)
 }
 
-const handleShare = async () => {
+const handleShare = () => {
   if (!props.wallpaper) return
   
-  try {
-    if (navigator.share) {
-      await navigator.share({
-        title: props.wallpaper.name,
-        text: props.wallpaper.description,
-        url: window.location.href,
-      })
-    } else {
-      await navigator.clipboard.writeText(window.location.href)
-      message.success('链接已复制到剪贴板')
-    }
-  } catch (error) {
-    console.error('分享失败：', error)
+  // 生成分享链接
+  shareLink.value = `${window.location.origin}/wallpaper/${props.wallpaper.id}`
+  
+  // 打开分享弹窗
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
   }
 }
 

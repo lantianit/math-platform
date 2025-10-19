@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS wallpaper
     width          INT COMMENT '图片宽度',
     height         INT COMMENT '图片高度',
     file_size      BIGINT COMMENT '文件大小（字节）',
+    pic_color      VARCHAR(16) COMMENT '图片主色调（十六进制颜色值，如 0xFF0000）',
     download_count INT         DEFAULT 0 COMMENT '下载次数',
     like_count     INT         DEFAULT 0 COMMENT '点赞数',
     status         INT         DEFAULT 0 COMMENT '状态（0-正常，1-隐藏）',
@@ -36,5 +37,6 @@ CREATE TABLE IF NOT EXISTS wallpaper
     INDEX idx_user_id (user_id),
     INDEX idx_create_time (create_time),
     INDEX idx_download_count (download_count),
-    INDEX idx_like_count (like_count)
+    INDEX idx_like_count (like_count),
+    INDEX idx_pic_color (pic_color)
 ) COMMENT ='学习加油壁纸表' COLLATE = utf8mb4_unicode_ci;

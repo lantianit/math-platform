@@ -13,8 +13,13 @@ import com.zh.mathplatform.infrastructure.exception.ThrowUtils;
 import com.zh.mathplatform.infrastructure.utils.UserHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import com.zh.mathplatform.infrastructure.api.imagesearch.ImageSearchApiFacade;
+import com.zh.mathplatform.infrastructure.api.imagesearch.model.ImageSearchResult;
+import com.zh.mathplatform.interfaces.dto.wallpaper.SearchPictureByPictureRequest;
+import com.zh.mathplatform.interfaces.dto.wallpaper.SearchWallpaperByColorRequest;
 import com.zh.mathplatform.interfaces.dto.wallpaper.WallpaperBatchCrawlRequest;
 import com.zh.mathplatform.interfaces.dto.wallpaper.WallpaperQueryRequest;
+import com.zh.mathplatform.interfaces.dto.wallpaper.WallpaperBatchEditRequest;
 import com.zh.mathplatform.interfaces.vo.wallpaper.WallpaperVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 壁纸接口
@@ -130,5 +136,51 @@ public class WallpaperController {
         
         Page<WallpaperVO> wallpaperPage = wallpaperApplicationService.pageWallpapers(queryRequest);
         return ResultUtils.success(wallpaperPage);
+    }
+
+    /**
+     * 以图搜图
+     */
+    @PostMapping("/search/picture")
+    @ApiOperation("以图搜图")
+    public BaseResponse<List<ImageSearchResult>> searchPictureByPicture(@RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest) {
+        ThrowUtils.throwIf(searchPictureByPictureRequest == null, ErrorCode.PARAMS_ERROR);
+        Long pictureId = searchPictureByPictureRequest.getPictureId();
+        ThrowUtils.throwIf(pictureId == null || pictureId <= 0, ErrorCode.PARAMS_ERROR);
+        
+        WallpaperVO wallpaperVO = wallpaperApplicationService.getWallpaperById(pictureId);
+        ThrowUtils.throwIf(wallpaperVO == null, ErrorCode.NOT_FOUND_ERROR);
+        
+        List<ImageSearchResult> resultList = ImageSearchApiFacade.searchImage(wallpaperVO.getUrl());
+        return ResultUtils.success(resultList);
+    }
+
+    /**
+     * 按颜色搜索壁纸
+     */
+    @PostMapping("/search/color")
+    @ApiOperation("按颜色搜索壁纸")
+    public BaseResponse<List<WallpaperVO>> searchWallpaperByColor(
+            @RequestBody SearchWallpaperByColorRequest searchWallpaperByColorRequest) {
+        ThrowUtils.throwIf(searchWallpaperByColorRequest == null, ErrorCode.PARAMS_ERROR);
+        
+        String picColor = searchWallpaperByColorRequest.getPicColor();
+        Integer limit = searchWallpaperByColorRequest.getLimit();
+        
+        List<WallpaperVO> result = wallpaperApplicationService.searchWallpaperByColor(picColor, limit);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 批量编辑壁纸
+     */
+    @PostMapping("/batch/edit")
+    @ApiOperation("批量编辑壁纸")
+    public BaseResponse<Boolean> batchEditWallpapers(@RequestBody WallpaperBatchEditRequest batchEditRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(batchEditRequest == null, ErrorCode.PARAMS_ERROR);
+        
+        Long userId = UserHolder.getLoginUserIdRequired(request);
+        boolean result = wallpaperApplicationService.batchEditWallpapers(batchEditRequest, userId);
+        return ResultUtils.success(result);
     }
 }

@@ -64,14 +64,14 @@ const router = createRouter({
       component: () => import('@/pages/WallpaperPageNatural.vue'),
     },
     {
+      path: '/wallpaper/:id',
+      name: '壁纸详情',
+      component: () => import('@/pages/WallpaperDetailPage.vue'),
+    },
+    {
       path: '/wallpaper/enterprise',
       name: '壁纸页面(企业版)',
       component: () => import('@/pages/WallpaperPageEnterprise.vue'),
-    },
-    {
-      path: '/wallpaper/legacy',
-      name: '壁纸页面(旧版)',
-      component: () => import('@/pages/WallpaperPage.vue'),
     },
     {
       path: '/admin/wallpaper',
@@ -82,6 +82,11 @@ const router = createRouter({
       path: '/admin/wallpaper/batch-crawl',
       name: '批量抓取壁纸',
       component: () => import('@/pages/admin/WallpaperBatchCrawlPage.vue'),
+    },
+    {
+      path: '/search_picture',
+      name: '图片搜索',
+      component: () => import('@/pages/SearchPicturePage.vue'),
     },
     // 笔记相关路由
     {
@@ -118,6 +123,11 @@ const router = createRouter({
       path: '/admin/note-space',
       name: '笔记空间管理',
       component: () => import('@/pages/admin/NoteSpaceManagePage.vue'),
+    },
+    {
+      path: '/test-share',
+      name: '分享功能测试',
+      component: () => import('@/pages/TestSharePage.vue'),
     },
   ],
 })

@@ -39,6 +39,15 @@
             type="primary"
             ghost
             size="small"
+            @click.stop="handleShare"
+            class="action-btn"
+          >
+            <ShareAltOutlined />
+          </a-button>
+          <a-button
+            type="primary"
+            ghost
+            size="small"
             @click.stop="handlePreview"
             class="action-btn"
           >
@@ -145,6 +154,7 @@ import {
   DownloadOutlined,
   HeartOutlined,
   HeartFilled,
+  ShareAltOutlined,
   EyeOutlined
 } from '@ant-design/icons-vue'
 
@@ -158,6 +168,7 @@ interface Emits {
   (e: 'click', wallpaper: API.WallpaperVO): void
   (e: 'download', wallpaper: API.WallpaperVO): void
   (e: 'like', wallpaper: API.WallpaperVO): void
+  (e: 'share', wallpaper: API.WallpaperVO): void
   (e: 'preview', wallpaper: API.WallpaperVO): void
 }
 
@@ -244,6 +255,10 @@ const handleQuickDownload = () => {
 
 const handleQuickLike = () => {
   handleLike()
+}
+
+const handleShare = () => {
+  emit('share', props.wallpaper)
 }
 
 const handlePreview = () => {

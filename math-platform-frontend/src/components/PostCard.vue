@@ -179,6 +179,13 @@
       </a-tooltip>
     </template>
   </a-card>
+
+  <!-- 分享弹窗 -->
+  <ShareModal 
+    ref="shareModalRef" 
+    :title="post.title || '分享帖子'" 
+    :link="shareLink" 
+  />
 </template>
 
 <script setup lang="ts">
@@ -201,6 +208,7 @@ import {
 } from '@ant-design/icons-vue'
 import { usePostStore } from '@/stores/usePostStore'
 import { getCategoryColor, getCategoryName } from '@/constants/category'
+import ShareModal from '@/components/ShareModal.vue'
 
 // 配置dayjs
 dayjs.extend(relativeTime)
@@ -235,6 +243,10 @@ const postStore = usePostStore()
 // 响应式状态
 const likeLoading = ref(false)
 const favouriteLoading = ref(false)
+
+// 分享相关
+const shareModalRef = ref()
+const shareLink = ref<string>('')
 
 // 计算属性
 const postImages = computed(() => {
@@ -364,13 +376,14 @@ const handleCommentClick = () => {
 
 const handleShare = () => {
   emit('share', props.post)
-  // 复制链接到剪贴板
-  const url = `${window.location.origin}/post/${props.post.id}`
-  navigator.clipboard.writeText(url).then(() => {
-    message.success('链接已复制到剪贴板')
-  }).catch(() => {
-    message.error('复制失败')
-  })
+  
+  // 生成分享链接
+  shareLink.value = `${window.location.origin}/post/${props.post.id}`
+  
+  // 打开分享弹窗
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
+  }
 }
 
 const handleReport = () => {

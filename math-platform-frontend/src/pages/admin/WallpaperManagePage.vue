@@ -7,6 +7,14 @@
           <PlusOutlined />
           批量抓取壁纸
         </a-button>
+        <a-button 
+          type="primary" 
+          :icon="h(EditOutlined)" 
+          @click="doBatchEdit"
+          :disabled="selectedRowKeys.length === 0"
+        >
+          批量编辑 ({{ selectedRowKeys.length }})
+        </a-button>
         <a-button @click="refreshData">
           <ReloadOutlined />
           刷新
@@ -15,51 +23,7 @@
     </div>
 
     <!-- 搜索筛选 -->
-    <a-card class="search-card">
-      <a-form layout="inline" :model="searchForm" @finish="handleSearch">
-        <a-form-item label="壁纸名称">
-          <a-input
-            v-model:value="searchForm.name"
-            placeholder="请输入壁纸名称"
-            style="width: 200px"
-            allow-clear
-          />
-        </a-form-item>
-        <a-form-item label="分类">
-          <a-select
-            v-model:value="searchForm.category"
-            placeholder="选择分类"
-            style="width: 150px"
-            allow-clear
-          >
-            <a-select-option value="学习励志">学习励志</a-select-option>
-            <a-select-option value="奋斗拼搏">奋斗拼搏</a-select-option>
-            <a-select-option value="青春梦想">青春梦想</a-select-option>
-            <a-select-option value="书籍文字">书籍文字</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="状态">
-          <a-select
-            v-model:value="searchForm.status"
-            placeholder="选择状态"
-            style="width: 120px"
-            allow-clear
-          >
-            <a-select-option :value="0">正常</a-select-option>
-            <a-select-option :value="1">隐藏</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" html-type="submit">
-            <SearchOutlined />
-            搜索
-          </a-button>
-          <a-button style="margin-left: 8px" @click="resetSearch">
-            重置
-          </a-button>
-        </a-form-item>
-      </a-form>
-    </a-card>
+    <PictureSearchForm :onSearch="handleSearch" />
 
     <!-- 壁纸列表 -->
     <a-card title="壁纸管理" class="table-card">
@@ -74,6 +38,7 @@
         :data-source="wallpaperList"
         :pagination="paginationConfig"
         :loading="loading"
+        :row-selection="rowSelection"
         row-key="id"
         @change="handleTableChange"
       >
@@ -140,6 +105,14 @@
 
           <template v-if="column.key === 'action'">
             <a-space>
+              <a-button
+                type="link"
+                size="small"
+                @click="searchImage(record)"
+              >
+                <SearchOutlined />
+                搜索
+              </a-button>
               <a-button
                 type="link"
                 size="small"
@@ -229,11 +202,18 @@
         </a-descriptions>
       </div>
     </a-modal>
+
+    <!-- 批量编辑弹窗 -->
+    <BatchEditWallpaperModal
+      ref="batchEditWallpaperModalRef"
+      :wallpaperList="selectedWallpapers"
+      :onSuccess="onBatchEditSuccess"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, h, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
@@ -242,9 +222,12 @@ import {
   ReloadOutlined,
   SearchOutlined,
   DownloadOutlined,
-  HeartOutlined
+  HeartOutlined,
+  EditOutlined
 } from '@ant-design/icons-vue'
-import { listAllWallpapersByPageUsingPost } from '@/api/bizhiguanli'
+import { listAllWallpapersByPageUsingPost, deleteWallpaperUsingPost } from '@/api/bizhiguanli'
+import PictureSearchForm from '@/components/PictureSearchForm.vue'
+import BatchEditWallpaperModal from '@/components/BatchEditWallpaperModal.vue'
 
 const router = useRouter()
 
@@ -256,11 +239,14 @@ const detailVisible = ref(false)
 const previewWallpaper = ref<API.WallpaperVO | null>(null)
 const detailWallpaper = ref<API.WallpaperVO | null>(null)
 
+// 批量编辑相关
+const selectedRowKeys = ref<number[]>([])
+const batchEditWallpaperModalRef = ref()
+
 // 搜索表单
-const searchForm = reactive({
-  name: '',
-  category: undefined as string | undefined,
-  status: undefined as number | undefined
+const searchForm = ref<API.WallpaperQueryRequest>({
+  current: 1,
+  pageSize: 10,
 })
 
 // 分页配置
@@ -279,6 +265,24 @@ const paginationConfig = {
   showTotal: (total: number, range: [number, number]) => 
     `第 ${range[0]}-${range[1]} 条，共 ${total} 条`
 }
+
+// 表格行选择配置
+const rowSelection = {
+  selectedRowKeys: selectedRowKeys,
+  onChange: (keys: number[]) => {
+    selectedRowKeys.value = keys
+  },
+  getCheckboxProps: (record: API.WallpaperVO) => ({
+    name: record.name,
+  }),
+}
+
+// 选中的壁纸列表
+const selectedWallpapers = computed(() => {
+  return wallpaperList.value.filter(wallpaper => 
+    selectedRowKeys.value.includes(wallpaper.id!)
+  )
+})
 
 // 表格列配置
 const columns = [
@@ -323,7 +327,7 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 150,
+    width: 200,
     align: 'center'
   }
 ]
@@ -339,11 +343,9 @@ const loadWallpapers = async () => {
   
   try {
     const queryRequest = {
+      ...searchForm.value,
       current: pagination.current,
       pageSize: pagination.pageSize,
-      name: searchForm.name || undefined,
-      category: searchForm.category,
-      status: searchForm.status
     }
     
     const response = await listAllWallpapersByPageUsingPost(queryRequest)
@@ -364,16 +366,12 @@ const loadWallpapers = async () => {
 }
 
 // 搜索
-const handleSearch = () => {
-  pagination.current = 1
-  loadWallpapers()
-}
-
-// 重置搜索
-const resetSearch = () => {
-  searchForm.name = ''
-  searchForm.category = undefined
-  searchForm.status = undefined
+const handleSearch = (newSearchParams: API.WallpaperQueryRequest) => {
+  searchForm.value = {
+    ...newSearchParams,
+    current: 1,
+    pageSize: pagination.pageSize,
+  }
   pagination.current = 1
   loadWallpapers()
 }
@@ -393,6 +391,17 @@ const refreshData = () => {
 // 跳转到批量抓取页面
 const goToBatchCrawl = () => {
   router.push('/admin/wallpaper/batch-crawl')
+}
+
+// 以图搜图 - 直接打开百度识图页面
+const searchImage = (wallpaper: API.WallpaperVO) => {
+  if (!wallpaper.url) {
+    message.error('图片地址无效')
+    return
+  }
+  // 构建百度识图 URL
+  const baiduImageSearchUrl = `https://graph.baidu.com/details?isfromtusoupc=1&tn=pc&carousel=0&promotion_name=pc_image_shituindex&extUiData%5bisLogoShow%5d=1&image=${encodeURIComponent(wallpaper.url)}`
+  window.open(baiduImageSearchUrl, '_blank')
 }
 
 // 预览图片
@@ -425,16 +434,22 @@ const toggleStatus = async (wallpaper: API.WallpaperVO) => {
 // 删除壁纸
 const deleteWallpaper = async (wallpaper: API.WallpaperVO) => {
   try {
-    // 这里应该调用删除API
-    // 暂时只是前端删除
-    const index = wallpaperList.value.findIndex(item => item.id === wallpaper.id)
-    if (index !== -1) {
-      wallpaperList.value.splice(index, 1)
-      pagination.total--
+    const response = await deleteWallpaperUsingPost({ id: wallpaper.id })
+    
+    if (response.data?.code === 0) {
+      // 从列表中移除
+      const index = wallpaperList.value.findIndex(item => item.id === wallpaper.id)
+      if (index !== -1) {
+        wallpaperList.value.splice(index, 1)
+        pagination.total--
+      }
+      message.success('删除成功')
+    } else {
+      message.error('删除失败：' + (response.data?.message || '未知错误'))
     }
-    message.success('删除成功')
   } catch (error) {
-    message.error('删除失败')
+    console.error('删除壁纸失败：', error)
+    message.error('删除失败，请稍后重试')
   }
 }
 
@@ -458,6 +473,24 @@ const formatFileSize = (size: number | undefined) => {
   
   return `${value.toFixed(1)} ${units[index]}`
 }
+
+// 批量编辑相关函数
+const doBatchEdit = () => {
+  if (selectedRowKeys.value.length === 0) {
+    message.warning('请先选择要编辑的壁纸')
+    return
+  }
+  
+  if (batchEditWallpaperModalRef.value) {
+    batchEditWallpaperModalRef.value.openModal()
+  }
+}
+
+// 批量编辑成功后，刷新数据
+const onBatchEditSuccess = () => {
+  selectedRowKeys.value = []
+  loadWallpapers()
+}
 </script>
 
 <style scoped lang="less">
@@ -469,9 +502,6 @@ const formatFileSize = (size: number | undefined) => {
   margin-bottom: 16px;
 }
 
-.search-card {
-  margin-bottom: 16px;
-}
 
 .table-card {
   .table-image {

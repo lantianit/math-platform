@@ -144,9 +144,16 @@ public abstract class PictureUploadTemplate {
         int picHeight = compressedCiObject.getHeight();
         double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
         
+        // 验证 host 配置
+        String host = cosClientConfig.getHost();
+        if (host == null || host.trim().isEmpty()) {
+            log.error("❌ COS Host 配置为空，无法生成图片访问URL！请检查 application-dev.yml 中的 cos.client.host 配置");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "COS配置错误：host未配置");
+        }
+        
         UploadPictureResult uploadPictureResult = new UploadPictureResult();
         // 设置图片为压缩后的地址（WebP格式）
-        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + compressedCiObject.getKey());
+        uploadPictureResult.setUrl(host + "/" + compressedCiObject.getKey());
         uploadPictureResult.setObjectKey(compressedCiObject.getKey());
         uploadPictureResult.setPicName(FileUtil.mainName(originalFilename));
         uploadPictureResult.setPicSize(compressedCiObject.getSize().longValue());
@@ -157,7 +164,7 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicColor(imageInfo.getAve());
         
         // 设置缩略图信息
-        uploadPictureResult.setThumbnailUrl(cosClientConfig.getHost() + "/" + thumbnailCiObject.getKey());
+        uploadPictureResult.setThumbnailUrl(host + "/" + thumbnailCiObject.getKey());
         uploadPictureResult.setThumbnailKey(thumbnailCiObject.getKey());
         
         return uploadPictureResult;
@@ -167,8 +174,16 @@ public abstract class PictureUploadTemplate {
         int picWidth = imageInfo.getWidth();
         int picHeight = imageInfo.getHeight();
         double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
+        
+        // 验证 host 配置
+        String host = cosClientConfig.getHost();
+        if (host == null || host.trim().isEmpty()) {
+            log.error("❌ COS Host 配置为空，无法生成图片访问URL！请检查 application-dev.yml 中的 cos.client.host 配置");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "COS配置错误：host未配置");
+        }
+        
         UploadPictureResult uploadPictureResult = new UploadPictureResult();
-        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
+        uploadPictureResult.setUrl(host + "/" + uploadPath);
         uploadPictureResult.setObjectKey(uploadPath);
         uploadPictureResult.setPicName(FileUtil.mainName(originalFilename));
         uploadPictureResult.setPicSize(FileUtil.size(file));

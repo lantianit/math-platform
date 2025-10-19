@@ -17,43 +17,48 @@
       </div>
     </div>
 
-    <!-- 工具栏 -->
+    <!-- 🔍 高级搜索工具栏 -->
     <div class="toolbar">
       <div class="container">
-        <div class="toolbar-left">
-          <a-input-search
-            v-model:value="searchKeyword"
-            placeholder="搜索壁纸..."
-            style="width: 300px"
-            @search="handleSearch"
-          />
-        </div>
-        
-        <div class="toolbar-right">
-          <a-tabs 
-            v-model:activeKey="selectedCategory" 
-            @change="handleCategoryChange"
-            type="card"
-            size="small"
-          >
-            <a-tab-pane key="" tab="全部" />
-            <a-tab-pane key="学习励志" tab="学习励志" />
-            <a-tab-pane key="奋斗拼搏" tab="奋斗拼搏" />
-            <a-tab-pane key="青春梦想" tab="青春梦想" />
-            <a-tab-pane key="书籍文字" tab="书籍文字" />
-          </a-tabs>
-          
-          <a-select
-            v-model:value="sortBy"
-            style="width: 100px; margin-left: 16px"
-            size="small"
-            @change="handleSortChange"
-          >
-            <a-select-option value="createTime">最新</a-select-option>
-            <a-select-option value="likeCount">最热</a-select-option>
-            <a-select-option value="downloadCount">下载</a-select-option>
-          </a-select>
-        </div>
+        <PictureSearchForm :onSearch="handleSearch" />
+      </div>
+    </div>
+
+    <!-- 颜色搜索区域 -->
+    <div class="color-search-section">
+      <div class="container">
+        <a-card title="🎨 按颜色搜索" size="small">
+          <div class="color-picker-container">
+            <div class="color-picker-wrapper">
+              <ColorPicker
+                v-model:pureColor="selectedColor"
+                format="hex"
+                :disableAlpha="true"
+                pickerType="chrome"
+              />
+            </div>
+            <div class="color-info">
+              <div class="color-preview" :style="{ backgroundColor: selectedColor }"></div>
+              <div class="color-value">{{ selectedColor }}</div>
+            </div>
+            <div class="limit-input">
+              <span class="limit-label">返回数量：</span>
+              <a-input-number
+                v-model:value="searchLimit"
+                :min="1"
+                :max="100"
+                :step="1"
+                style="width: 100px;"
+                placeholder="输入数量"
+              />
+              <span class="limit-hint">（1-100张）</span>
+            </div>
+            <a-space>
+              <a-button type="primary" @click="handleColorSearch">搜索相似颜色</a-button>
+              <a-button v-if="colorSearchMode" @click="handleResetSearch">返回普通搜索</a-button>
+            </a-space>
+          </div>
+        </a-card>
       </div>
     </div>
 
@@ -80,6 +85,14 @@
                   <a-button 
                     type="text" 
                     size="small" 
+                    @click.stop="handleSearchImage(wallpaper)"
+                    class="action-btn"
+                  >
+                    <SearchOutlined />
+                  </a-button>
+                  <a-button 
+                    type="text" 
+                    size="small" 
                     @click.stop="handleDownload(wallpaper)"
                     class="action-btn"
                   >
@@ -93,6 +106,14 @@
                   >
                     <HeartOutlined />
                     {{ wallpaper.likeCount || 0 }}
+                  </a-button>
+                  <a-button 
+                    type="text" 
+                    size="small" 
+                    @click.stop="handleShare(wallpaper)"
+                    class="action-btn"
+                  >
+                    <ShareAltOutlined />
                   </a-button>
                 </div>
               </div>
@@ -153,6 +174,21 @@
             <a-descriptions-item label="尺寸">
               {{ currentWallpaper.width }}×{{ currentWallpaper.height }}
             </a-descriptions-item>
+            <a-descriptions-item label="主色调">
+              <a-space v-if="currentWallpaper.picColor">
+                <span>{{ toHexColor(currentWallpaper.picColor) }}</span>
+                <div
+                  :style="{
+                    backgroundColor: toHexColor(currentWallpaper.picColor),
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '4px',
+                    border: '1px solid #ddd',
+                  }"
+                />
+              </a-space>
+              <span v-else>-</span>
+            </a-descriptions-item>
             <a-descriptions-item label="下载次数">{{ currentWallpaper.downloadCount }}</a-descriptions-item>
             <a-descriptions-item label="点赞数">{{ currentWallpaper.likeCount }}</a-descriptions-item>
           </a-descriptions>
@@ -170,6 +206,13 @@
         </div>
       </div>
     </a-modal>
+
+    <!-- 分享弹窗 -->
+    <ShareModal 
+      ref="shareModalRef" 
+      :title="shareWallpaper?.name || '分享壁纸'" 
+      :link="shareLink" 
+    />
   </div>
 </template>
 
@@ -178,18 +221,39 @@ import { ref, reactive, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import {
   DownloadOutlined,
-  HeartOutlined
+  HeartOutlined,
+  SearchOutlined,
+  ShareAltOutlined
 } from '@ant-design/icons-vue'
-import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost } from '@/api/bizhiguanli'
+import { listWallpapersByPageUsingPost, incrementDownloadCountUsingPost, likeWallpaperUsingPost, searchWallpaperByColorUsingPost } from '@/api/bizhiguanli'
+import PictureSearchForm from '@/components/PictureSearchForm.vue'
+import ShareModal from '@/components/ShareModal.vue'
+import { ColorPicker } from 'vue3-colorpicker'
+import 'vue3-colorpicker/style.css'
+import { toHexColor } from '@/utils'
 
 const wallpaperList = ref<API.WallpaperVO[]>([])
 const loading = ref(false)
 const hasMore = ref(true)
-const searchKeyword = ref('')
-const selectedCategory = ref('')
-const sortBy = ref('createTime')
 const detailVisible = ref(false)
 const currentWallpaper = ref<API.WallpaperVO | null>(null)
+
+// 搜索参数
+const searchParams = ref<API.WallpaperQueryRequest>({
+  current: 1,
+  pageSize: 20,
+  status: 0 // 只查询正常状态的壁纸
+})
+
+// 颜色搜索相关
+const colorSearchMode = ref(false)
+const selectedColor = ref('#FF0000')
+const searchLimit = ref(20)  // 搜索返回数量
+
+// 分享相关
+const shareModalRef = ref()
+const shareWallpaper = ref<API.WallpaperVO | null>(null)
+const shareLink = ref<string>('')
 
 const pagination = reactive({
   current: 1,
@@ -209,11 +273,9 @@ const loadWallpapers = async (reset = false) => {
     }
     
     const queryRequest = {
+      ...searchParams.value,
       current: pagination.current,
       pageSize: pagination.pageSize,
-      name: searchKeyword.value || undefined,
-      category: selectedCategory.value || undefined,
-      status: 0
     }
     
     const response = await listWallpapersByPageUsingPost(queryRequest)
@@ -240,15 +302,14 @@ const loadWallpapers = async (reset = false) => {
   }
 }
 
-const handleSearch = () => {
-  loadWallpapers(true)
-}
-
-const handleCategoryChange = () => {
-  loadWallpapers(true)
-}
-
-const handleSortChange = () => {
+const handleSearch = (newSearchParams: API.WallpaperQueryRequest) => {
+  searchParams.value = {
+    ...newSearchParams,
+    current: 1,
+    pageSize: pagination.pageSize,
+    status: 0 // 只查询正常状态的壁纸
+  }
+  pagination.current = 1
   loadWallpapers(true)
 }
 
@@ -308,6 +369,66 @@ const handleLike = async (wallpaper: API.WallpaperVO) => {
     console.error('点赞失败：', error)
     message.error('点赞失败，请稍后重试')
   }
+}
+
+// 以图搜图 - 直接打开百度识图页面
+const handleSearchImage = (wallpaper: API.WallpaperVO) => {
+  if (!wallpaper.url) {
+    message.error('图片地址无效')
+    return
+  }
+  // 构建百度识图 URL
+  const baiduImageSearchUrl = `https://graph.baidu.com/details?isfromtusoupc=1&tn=pc&carousel=0&promotion_name=pc_image_shituindex&extUiData%5bisLogoShow%5d=1&image=${encodeURIComponent(wallpaper.url)}`
+  window.open(baiduImageSearchUrl, '_blank')
+}
+
+// 分享处理
+const handleShare = (wallpaper: API.WallpaperVO) => {
+  shareWallpaper.value = wallpaper
+  shareLink.value = `${window.location.origin}/wallpaper/${wallpaper.id}`
+  
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
+  }
+}
+
+// 颜色搜索处理
+const handleColorSearch = async () => {
+  try {
+    loading.value = true
+    colorSearchMode.value = true
+    
+    const res = await searchWallpaperByColorUsingPost({
+      picColor: selectedColor.value,
+      limit: searchLimit.value,
+    })
+    
+    if (res.data?.code === 0 && res.data.data) {
+      wallpaperList.value = res.data.data
+      pagination.total = res.data.data.length
+      hasMore.value = false
+      message.success(`找到 ${res.data.data.length} 张相似颜色的壁纸`)
+    } else {
+      message.error('搜索失败：' + (res.data?.message || '未知错误'))
+    }
+  } catch (error) {
+    console.error('颜色搜索失败：', error)
+    message.error('搜索失败，请稍后重试')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 重置搜索
+const handleResetSearch = () => {
+  colorSearchMode.value = false
+  searchParams.value = {
+    current: 1,
+    pageSize: 20,
+    status: 0
+  }
+  pagination.current = 1
+  loadWallpapers(true)
 }
 
 const handleImageError = (event: Event) => {
@@ -396,6 +517,67 @@ onMounted(() => {
           color: white;
         }
       }
+    }
+  }
+}
+
+.color-search-section {
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 0;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+}
+
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  
+  .color-picker-wrapper {
+    flex-shrink: 0;
+  }
+  
+  .color-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .color-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .color-value {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      font-size: 14px;
+      color: #333;
+    }
+  }
+  
+  .limit-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .limit-label {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .limit-hint {
+      font-size: 12px;
+      color: #999;
     }
   }
 }

@@ -108,6 +108,7 @@ public class WallpaperCrawlServiceImpl implements WallpaperCrawlService {
                 wallpaper.setWidth(uploadResult.getPicWidth());
                 wallpaper.setHeight(uploadResult.getPicHeight());
                 wallpaper.setFileSize(uploadResult.getPicSize());
+                wallpaper.setPicColor(uploadResult.getPicColor()); // 设置图片主色调
                 wallpaper.setDownloadCount(0);
                 wallpaper.setLikeCount(0);
                 wallpaper.setStatus(0);

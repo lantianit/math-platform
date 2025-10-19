@@ -945,20 +945,47 @@ declare namespace API {
   }
 
   type WallpaperQueryRequest = {
-    /** Category */
-    category?: string
-    current?: number
+    /** Search keyword */
+    searchText?: string
     /** Wallpaper name */
     name?: string
+    /** Introduction/Description */
+    introduction?: string
+    /** Category */
+    category?: string
+    /** Tag */
+    tag?: string
+    /** Tags list */
+    tags?: string[]
+    /** Picture width */
+    picWidth?: number
+    /** Picture height */
+    picHeight?: number
+    /** Picture format */
+    picFormat?: string
+    /** Start edit time */
+    startEditTime?: string
+    /** End edit time */
+    endEditTime?: string
+    /** User ID */
+    userId?: number
+    /** Status */
+    status?: number
+    current?: number
     pageSize?: number
     sortField?: string
     sortOrder?: string
-    /** Status */
-    status?: number
-    /** Tag */
-    tag?: string
-    /** User ID */
-    userId?: number
+  }
+
+  type WallpaperBatchEditRequest = {
+    /** 壁纸 id 列表 */
+    wallpaperIdList?: number[]
+    /** 分类 */
+    category?: string
+    /** 标签 */
+    tags?: string[]
+    /** 命名规则 */
+    nameRule?: string
   }
 
   type WallpaperVO = {
@@ -980,6 +1007,8 @@ declare namespace API {
     likeCount?: number
     /** Wallpaper name */
     name?: string
+    /** Picture color */
+    picColor?: string
     /** Status */
     status?: number
     /** Tags */
@@ -992,5 +1021,36 @@ declare namespace API {
     userId?: number
     /** Width */
     width?: number
+  }
+
+  type SearchPictureByPictureRequest = {
+    /** 图片 id */
+    pictureId?: number
+  }
+
+  type ImageSearchResult = {
+    /** 缩略图地址 */
+    thumbUrl?: string
+    /** 来源地址 */
+    fromUrl?: string
+  }
+
+  type BaseResponseListImageSearchResult_ = {
+    code?: number
+    data?: ImageSearchResult[]
+    message?: string
+  }
+
+  type SearchWallpaperByColorRequest = {
+    /** 目标颜色（十六进制） */
+    picColor?: string
+    /** 返回数量 */
+    limit?: number
+  }
+
+  type BaseResponseListWallpaperVO_ = {
+    code?: number
+    data?: WallpaperVO[]
+    message?: string
   }
 }

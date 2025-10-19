@@ -103,3 +103,48 @@ export async function listWallpapersByPageUsingPost(
     ...(options || {}),
   })
 }
+
+/** 以图搜图 POST /api/wallpaper/search/picture */
+export async function searchPictureByPictureUsingPost(
+  body: API.SearchPictureByPictureRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseListImageSearchResult_>('/api/wallpaper/search/picture', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 按颜色搜索壁纸 POST /api/wallpaper/search/color */
+export async function searchWallpaperByColorUsingPost(
+  body: API.SearchWallpaperByColorRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseListWallpaperVO_>('/api/wallpaper/search/color', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 批量编辑壁纸 POST /api/wallpaper/batch/edit */
+export async function batchEditWallpapersUsingPost(
+  body: API.WallpaperBatchEditRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/wallpaper/batch/edit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}

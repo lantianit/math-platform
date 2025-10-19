@@ -69,6 +69,12 @@ public class Wallpaper implements Serializable {
     private Long fileSize;
 
     /**
+     * 图片主色调（十六进制颜色值）
+     */
+    @TableField("pic_color")
+    private String picColor;
+
+    /**
      * 下载次数
      */
     @TableField("download_count")

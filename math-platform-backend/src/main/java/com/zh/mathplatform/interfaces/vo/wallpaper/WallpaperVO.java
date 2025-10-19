@@ -76,6 +76,12 @@ public class WallpaperVO {
     private Long fileSize;
 
     /**
+     * 图片主色调
+     */
+    @ApiModelProperty("Picture color")
+    private String picColor;
+
+    /**
      * 下载次数
      */
     @ApiModelProperty("Download count")
